@@ -17,11 +17,13 @@ CONFIG += c++11
 SOURCES += main.cpp\
         mainwindow.cpp \
     qchartviewer.cpp \
-    sleepresult.cpp
+    sleepresult.cpp \
+    style.cpp
 
 HEADERS  += mainwindow.h \
     qchartviewer.h \
-    sleepresult.h
+    sleepresult.h \
+    style.h
 
 INCLUDEPATH += $$PWD/include
 win32:LIBS += $$PWD/lib/chartdir60.lib

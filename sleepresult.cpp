@@ -43,9 +43,9 @@ void SleepResult::makeChart(){
 
 BaseChart *SleepResult::sleep(){
     // The tasks for the gantt chart
-    const char *labels[] = {"Market Research", "Define Specifications", "Overall Archiecture",
-        "Project Planning", "Detail Design", "Software Development", "Test Plan", "Testing and QA",
-        "User Documentation"};
+    const char *labels[] = {"2016-12-01", "2016-12-02", "2016-12-03",
+        "2016-12-04", "2016-12-05", "2016-12-06", "2016-12-07", "2016-12-08",
+        "2016-12-09"};
 
     // The task index, start date, end date and color for each bar
     double taskNo[] = {0, 0, 1, 2, 3, 4, 5, 6, 6, 7, 8, 8};
@@ -64,26 +64,25 @@ BaseChart *SleepResult::sleep(){
 
     // Create a XYChart object of size 620 x 325 pixels. Set background color to light red
     // (0xffcccc), with 1 pixel 3D border effect.
-    XYChart *c = new XYChart(this->width(), this->height(), 0xffcccc, 0x000000, 1);
-
-    // Add a title to the chart using 15 points Times Bold Itatic font, with white (ffffff) text on
-    // a dark red (800000) background
-    c->addTitle("Mutli-Color Gantt Chart Demo", "timesbi.ttf", 15, 0xffffff)->setBackground(0x800000
-        );
+    XYChart *c = new XYChart(this->width(), this->height(), GET_STYLE().main_bg_color, -1, 0);
 
     // Set the plotarea at (140, 55) and of size 460 x 200 pixels. Use alternative white/grey
     // background. Enable both horizontal and vertical grids by setting their colors to grey
     // (c0c0c0). Set vertical major grid (represents month boundaries) 2 pixels in width
-    c->setPlotArea(140, 55, this->width() - 140, this->height() - 55 - 100, 0xffffff, 0xeeeeee, Chart::LineColor, 0xc0c0c0, 0xc0c0c0
-        )->setGridWidth(2, 1, 1, 1);
+    c->setPlotArea(60, 20, this->width() - 60, this->height() - 20
+                   , GET_STYLE().plot_bg_color, -1
+                   , -1
+                   , GET_STYLE().grid_color
+                   , GET_STYLE().grid_color
+        )->setGridWidth(1, 1, 1, 1);
 
     // swap the x and y axes to create a horziontal box-whisker chart
     c->swapXY();
 
     // Set the y-axis scale to be date scale from Aug 16, 2004 to Nov 22, 2004, with ticks every 7
     // days (1 week)
-    c->yAxis()->setDateScale(Chart::chartTime(2004, 8, 16), Chart::chartTime(2004, 11, 22), 86400 *
-        7);
+//    c->yAxis()->setDateScale(Chart::chartTime(2004, 8, 16), Chart::chartTime(2004, 11, 22), 86400 *
+//        7);
 
     // Set multi-style axis label formatting. Month labels are in Arial Bold font in "mmm d" format.
     // Weekly labels just show the day of month and use minor tick (by using '-' as first character
@@ -91,6 +90,7 @@ BaseChart *SleepResult::sleep(){
     c->yAxis()->setMultiFormat(Chart::StartOfMonthFilter(), "<*font=arialbd.ttf*>{value|mmm d}",
         Chart::StartOfDayFilter(), "-{value|d}");
 
+    c->yAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
     // Set the y-axis to shown on the top (right + swapXY = top)
     c->setYAxisOnRight();
 
@@ -103,24 +103,7 @@ BaseChart *SleepResult::sleep(){
     // Set the horizontal ticks and grid lines to be between the bars
     c->xAxis()->setTickOffset(0.5);
 
-    // Add some symbols to the chart to represent milestones. The symbols are added using scatter
-    // layers. We need to specify the task index, date, name, symbol shape, size and color.
-    double coor1[] = {1};
-    double date1[] = {Chart::chartTime(2004, 9, 13)};
-    c->addScatterLayer(DoubleArray(coor1, (int)(sizeof(coor1) / sizeof(coor1[0]))), DoubleArray(
-        date1, (int)(sizeof(date1) / sizeof(date1[0]))), "Milestone 1", Chart::Cross2Shape(), 13,
-        0xffff00)->setHTMLImageMap("{disable}");
-    double coor2[] = {3};
-    double date2[] = {Chart::chartTime(2004, 10, 4)};
-    c->addScatterLayer(DoubleArray(coor2, (int)(sizeof(coor2) / sizeof(coor2[0]))), DoubleArray(
-        date2, (int)(sizeof(date2) / sizeof(date2[0]))), "Milestone 2", Chart::StarShape(5), 15,
-        0xff00ff)->setHTMLImageMap("{disable}");
-    double coor3[] = {5};
-    double date3[] = {Chart::chartTime(2004, 11, 8)};
-    c->addScatterLayer(DoubleArray(coor3, (int)(sizeof(coor3) / sizeof(coor3[0]))), DoubleArray(
-        date3, (int)(sizeof(date3) / sizeof(date3[0]))), "Milestone 3", Chart::TriangleSymbol, 13,
-        0xff9933)->setHTMLImageMap("{disable}");
-
+    c->xAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
     // Add a multi-color box-whisker layer to represent the gantt bars
     BoxWhiskerLayer *layer = c->addBoxWhiskerLayer2(DoubleArray(startDate, (int)(sizeof(startDate) /
         sizeof(startDate[0]))), DoubleArray(endDate, (int)(sizeof(endDate) / sizeof(endDate[0]))),
@@ -132,19 +115,6 @@ BaseChart *SleepResult::sleep(){
     // Divide the plot area height ( = 200 in this chart) by the number of tasks to get the height
     // of each slot. Use 80% of that as the bar height.
     layer->setDataWidth(200 * 4 / 5 / (int)(sizeof(labels) / sizeof(labels[0])));
-
-    // Add a legend box at (140, 265) - bottom of the plot area. Use 8pt Arial Bold as the font with
-    // auto-grid layout. Set the width to the same width as the plot area. Set the backgorund to
-    // grey (dddddd).
-    LegendBox *legendBox = c->addLegend2(140, this->height() - 55, Chart::AutoGrid, "arialbd.ttf", 8);
-    legendBox->setWidth(461);
-    legendBox->setBackground(0xdddddd);
-
-    // The keys for the scatter layers (milestone symbols) will automatically be added to the legend
-    // box. We just need to add keys to show the meanings of the bar colors.
-    legendBox->addKey("Market Team", 0x00cc00);
-    legendBox->addKey("Planning Team", 0x0000cc);
-    legendBox->addKey("Development Team", 0xcc0000);
 
     // Output the chart
     c->makeChart();

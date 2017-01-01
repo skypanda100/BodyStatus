@@ -3,6 +3,7 @@
 
 #include <QtWidgets>
 #include "qchartviewer.h"
+#include "style.h"
 
 class SleepResult : public QWidget{
     Q_OBJECT
