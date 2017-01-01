@@ -42,29 +42,29 @@ void SleepResult::initUI(){
         Bean::Sleep sleep;
         sleep.setDate(Chart::chartTime2(dateTime.toTime_t()));
         QDateTime startDateTime = QDateTime::fromString(
-                    QString("%1 %2").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd")).arg("23:00")
+                    QString("%1 %2").arg(dateTime.toString("yyyy-MM-dd")).arg("23:00")
                     ,"yyyy-MM-dd hh:mm");
         sleep.setStart(Chart::chartTime2(startDateTime.toTime_t()));
         QDateTime endDateTime = QDateTime::fromString(
-                    QString("%1 %2").arg(QDateTime::currentDateTime().addDays(1).toString("yyyy-MM-dd")).arg("07:32")
+                    QString("%1 %2").arg(dateTime.addDays(1).toString("yyyy-MM-dd")).arg("07:32")
                     ,"yyyy-MM-dd hh:mm");
         sleep.setEnd(Chart::chartTime2(endDateTime.toTime_t()));
 
         QDateTime deepStartDateTime = QDateTime::fromString(
-                    QString("%1 %2").arg(QDateTime::currentDateTime().addDays(1).toString("yyyy-MM-dd")).arg("01:02")
+                    QString("%1 %2").arg(dateTime.addDays(1).toString("yyyy-MM-dd")).arg("01:02")
                     ,"yyyy-MM-dd hh:mm");
         sleep.setDeepStart01(Chart::chartTime2(deepStartDateTime.toTime_t()));
         QDateTime deepEndDateTime = QDateTime::fromString(
-                    QString("%1 %2").arg(QDateTime::currentDateTime().addDays(1).toString("yyyy-MM-dd")).arg("02:32")
+                    QString("%1 %2").arg(dateTime.addDays(1).toString("yyyy-MM-dd")).arg("02:32")
                     ,"yyyy-MM-dd hh:mm");
         sleep.setDeepEnd01(Chart::chartTime2(deepEndDateTime.toTime_t()));
 
         QDateTime awakeStartDateTime = QDateTime::fromString(
-                    QString("%1 %2").arg(QDateTime::currentDateTime().addDays(1).toString("yyyy-MM-dd")).arg("03:02")
+                    QString("%1 %2").arg(dateTime.addDays(1).toString("yyyy-MM-dd")).arg("03:02")
                     ,"yyyy-MM-dd hh:mm");
         sleep.setAwakeStart01(Chart::chartTime2(awakeStartDateTime.toTime_t()));
         QDateTime awakeEndDateTime = QDateTime::fromString(
-                    QString("%1 %2").arg(QDateTime::currentDateTime().addDays(1).toString("yyyy-MM-dd")).arg("03:32")
+                    QString("%1 %2").arg(dateTime.addDays(1).toString("yyyy-MM-dd")).arg("03:32")
                     ,"yyyy-MM-dd hh:mm");
         sleep.setAwakeEnd01(Chart::chartTime2(awakeEndDateTime.toTime_t()));
 
@@ -78,6 +78,8 @@ void SleepResult::initConnect(){
 }
 
 void SleepResult::makeData(){
+    QDateTime qtime = QDateTime::fromString(QDateTime::currentDateTime().toString("yyyy-MM-dd"), "yyyy-MM-dd 00:00:00");
+    double currentTime = Chart::chartTime2(qtime.toTime_t());
     QList<double> labels;
     QList<double> taskNos;
     QList<double> startDates;
@@ -87,99 +89,101 @@ void SleepResult::makeData(){
     for(int i = 0;i < sleepCount;i++){
         Bean::Sleep sleep = m_sleepLst[i];
 
+        double minusTime = sleep.date() - currentTime;
+
         //date
         labels.append(sleep.date());
 
         //latent sleep
-        startDates.append(sleep.start());
-        endDates.append(sleep.end());
+        startDates.append(sleep.start() - minusTime);
+        endDates.append(sleep.end() - minusTime);
         taskNos.append(i);
         colors.append(LATENT_COLOR);
 
         //deep sleep
         if(sleep.deepStart01() != 0){
-            startDates.append(sleep.deepStart01());
-            endDates.append(sleep.deepEnd01());
+            startDates.append(sleep.deepStart01() - minusTime);
+            endDates.append(sleep.deepEnd01() - minusTime);
             taskNos.append(i);
             colors.append(DEEP_COLOR);
         }
         if(sleep.deepStart02() != 0){
-            startDates.append(sleep.deepStart02());
-            endDates.append(sleep.deepEnd02());
+            startDates.append(sleep.deepStart02() - minusTime);
+            endDates.append(sleep.deepEnd02() - minusTime);
             taskNos.append(i);
             colors.append(DEEP_COLOR);
         }
         if(sleep.deepStart03() != 0){
-            startDates.append(sleep.deepStart03());
-            endDates.append(sleep.deepEnd03());
+            startDates.append(sleep.deepStart03() - minusTime);
+            endDates.append(sleep.deepEnd03() - minusTime);
             taskNos.append(i);
             colors.append(DEEP_COLOR);
         }
         if(sleep.deepStart04() != 0){
-            startDates.append(sleep.deepStart04());
-            endDates.append(sleep.deepEnd04());
+            startDates.append(sleep.deepStart04() - minusTime);
+            endDates.append(sleep.deepEnd04() - minusTime);
             taskNos.append(i);
             colors.append(DEEP_COLOR);
         }
         if(sleep.deepStart05() != 0){
-            startDates.append(sleep.deepStart05());
-            endDates.append(sleep.deepEnd05());
+            startDates.append(sleep.deepStart05() - minusTime);
+            endDates.append(sleep.deepEnd05() - minusTime);
             taskNos.append(i);
             colors.append(DEEP_COLOR);
         }
         if(sleep.deepStart06() != 0){
-            startDates.append(sleep.deepStart06());
-            endDates.append(sleep.deepEnd06());
+            startDates.append(sleep.deepStart06() - minusTime);
+            endDates.append(sleep.deepEnd06() - minusTime);
             taskNos.append(i);
             colors.append(DEEP_COLOR);
         }
         if(sleep.deepStart07() != 0){
-            startDates.append(sleep.deepStart07());
-            endDates.append(sleep.deepEnd07());
+            startDates.append(sleep.deepStart07() - minusTime);
+            endDates.append(sleep.deepEnd07() - minusTime);
             taskNos.append(i);
             colors.append(DEEP_COLOR);
         }
         if(sleep.deepStart08() != 0){
-            startDates.append(sleep.deepStart08());
-            endDates.append(sleep.deepEnd08());
+            startDates.append(sleep.deepStart08() - minusTime);
+            endDates.append(sleep.deepEnd08() - minusTime);
             taskNos.append(i);
             colors.append(DEEP_COLOR);
         }
         if(sleep.deepStart09() != 0){
-            startDates.append(sleep.deepStart09());
-            endDates.append(sleep.deepEnd09());
+            startDates.append(sleep.deepStart09() - minusTime);
+            endDates.append(sleep.deepEnd09() - minusTime);
             taskNos.append(i);
             colors.append(DEEP_COLOR);
         }
         if(sleep.deepStart10() != 0){
-            startDates.append(sleep.deepStart10());
-            endDates.append(sleep.deepEnd10());
+            startDates.append(sleep.deepStart10() - minusTime);
+            endDates.append(sleep.deepEnd10() - minusTime);
             taskNos.append(i);
             colors.append(DEEP_COLOR);
         }
 
         //awake
         if(sleep.awakeStart01() != 0){
-            startDates.append(sleep.awakeStart01());
-            endDates.append(sleep.awakeEnd01());
+            startDates.append(sleep.awakeStart01() - minusTime);
+            endDates.append(sleep.awakeEnd01() - minusTime);
             taskNos.append(i);
             colors.append(AWAKE_COLOR);
         }
         if(sleep.awakeStart02() != 0){
-            startDates.append(sleep.awakeStart02());
-            endDates.append(sleep.awakeEnd02());
+            startDates.append(sleep.awakeStart02() - minusTime);
+            endDates.append(sleep.awakeEnd02() - minusTime);
             taskNos.append(i);
             colors.append(AWAKE_COLOR);
         }
         if(sleep.awakeStart03() != 0){
-            startDates.append(sleep.awakeStart03());
-            endDates.append(sleep.awakeEnd03());
+            startDates.append(sleep.awakeStart03() - minusTime);
+            endDates.append(sleep.awakeEnd03() - minusTime);
             taskNos.append(i);
             colors.append(AWAKE_COLOR);
         }
         if(sleep.awakeStart04() != 0){
-            startDates.append(sleep.awakeStart04());
-            endDates.append(sleep.awakeEnd04());
+            startDates.append(sleep.awakeStart04() - minusTime);
+            endDates.append(sleep.awakeEnd04() - minusTime);
             taskNos.append(i);
             colors.append(AWAKE_COLOR);
         }

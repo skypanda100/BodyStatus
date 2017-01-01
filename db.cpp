@@ -27,6 +27,9 @@ void Db::closeDb(){
 }
 
 double Db::getChartTime(QString dateTimeStr){
+    if(dateTimeStr.isEmpty()){
+        return 0;
+    }
     QDateTime dateTime = QDateTime::fromString(dateTimeStr, "yyyy-MM-ddThh:mm:ss");
     return Chart::chartTime2(dateTime.toTime_t());
 }

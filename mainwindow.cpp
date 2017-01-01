@@ -57,10 +57,6 @@ void MainWindow::initUI(){
     m_sleepAction = new QAction(sleepIcon, "Sleep", this);
     moduleToolBar->addAction(m_sleepAction);
 
-
-
-
-
     //input
     m_sleepInput = new SleepInput;
 
@@ -103,5 +99,24 @@ void MainWindow::onDarkStyleTriggered(){
 }
 
 void MainWindow::onPrintTriggered(){
-
+    QPixmap currentScreenPixmap;
+    if(QApplication::activeWindow()){
+        currentScreenPixmap = QPixmap::grabWindow(QApplication::activeWindow()->winId()
+                                                  , -2
+                                                  , -26
+                                                  , QApplication::activeWindow()->width()
+                                                  , QApplication::activeWindow()->height() + 25);
+    }
+    QPrinter printer(QPrinter::HighResolution);
+    QPrintDialog printDialog(&printer, this);
+    if (printDialog.exec()) {
+        QPainter painter(&printer);
+        QRect rect = painter.viewport();
+        QSize size = currentScreenPixmap.size();
+        size.scale(rect.size(), Qt::KeepAspectRatio);
+        painter.setViewport(rect.x(), rect.y(),
+                            size.width(), size.height());
+        painter.setWindow(currentScreenPixmap.rect());
+        painter.drawPixmap(0, 0, currentScreenPixmap);
+    }
 }

@@ -31,7 +31,7 @@ void SleepInput::initUI(){
 
     m_fDateEdit = new QDateEdit;
     m_fDateEdit->setFixedWidth(100);
-    m_fDateEdit->setDate(QDateTime::currentDateTime().date());
+    m_fDateEdit->setDate(QDateTime::currentDateTime().addDays(-7).date());
     m_fDateEdit->setCalendarPopup(true);
 
     QLabel *toLabel = new QLabel;
