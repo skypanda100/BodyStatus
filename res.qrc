@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/sleep.png</file>
+        <file>image/print.png</file>
+        <file>image/style.png</file>
+    </qresource>
+</RCC>

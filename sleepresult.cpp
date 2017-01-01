@@ -11,6 +11,16 @@ SleepResult::~SleepResult(){
     delete m_ChartViewer;
 }
 
+void SleepResult::onSearch(QList<Bean::Sleep> sleepLst){
+    this->m_sleepLst.clear();
+    this->m_sleepLst = sleepLst;
+    this->makeData();
+}
+
+void SleepResult::onStyle(){
+    this->makeData();
+}
+
 void SleepResult::initUI(){
     QDesktopWidget* desktopWidget = QApplication::desktop();
     QRect clientRect = desktopWidget->availableGeometry();
@@ -26,15 +36,6 @@ void SleepResult::initUI(){
 
     this->setLayout(mainLayout);
 
-    //test
-    this->makeData();
-}
-
-void SleepResult::initConnect(){
-
-}
-
-void SleepResult::makeData(){
     //test
     for(int i = 0;i < 30;i++){
         QDateTime dateTime = QDateTime::currentDateTime().addDays(i);
@@ -69,7 +70,14 @@ void SleepResult::makeData(){
 
         m_sleepLst.append(sleep);
     }
-    //
+    this->makeData();
+}
+
+void SleepResult::initConnect(){
+
+}
+
+void SleepResult::makeData(){
     QList<double> labels;
     QList<double> taskNos;
     QList<double> startDates;
@@ -269,7 +277,7 @@ BaseChart *SleepResult::sleep(double lowlimit, double uplimit
 
     XYChart *c = new XYChart(this->width(), this->height() + 60, GET_STYLE().main_bg_color, -1, 0);
 
-    c->setPlotArea(40, 20, this->width() - 40, this->height() - 20
+    c->setPlotArea(40, 20, this->width() - 40, this->height() - 60
                    , GET_STYLE().plot_bg_color, -1
                    , -1
                    , GET_STYLE().grid_color

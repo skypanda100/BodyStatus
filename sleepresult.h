@@ -15,6 +15,10 @@ public:
     SleepResult(QWidget *parent = NULL);
     ~SleepResult();
 
+public slots:
+    void onSearch(QList<Bean::Sleep>);
+    void onStyle();
+
 private:
     void initUI();
     void initConnect();
