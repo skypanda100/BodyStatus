@@ -18,12 +18,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     qchartviewer.cpp \
     sleepresult.cpp \
-    style.cpp
+    style.cpp \
+    sleep.cpp
 
 HEADERS  += mainwindow.h \
     qchartviewer.h \
     sleepresult.h \
-    style.h
+    style.h \
+    sleep.h
 
 INCLUDEPATH += $$PWD/include
 win32:LIBS += $$PWD/lib/chartdir60.lib
