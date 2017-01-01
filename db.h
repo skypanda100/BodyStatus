@@ -19,6 +19,7 @@ private:
     void openDb();
     void closeDb();
     double getChartTime(QString);
+    double getTruncChartTime(QString, QString);
 
 private:
     QSqlDatabase db;

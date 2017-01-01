@@ -34,43 +34,59 @@ double Db::getChartTime(QString dateTimeStr){
     return Chart::chartTime2(dateTime.toTime_t());
 }
 
+double Db::getTruncChartTime(QString dateTimeStr1, QString dateTimeStr2){
+    if(dateTimeStr1.isEmpty() || dateTimeStr2.isEmpty()){
+        return 0;
+    }
+    QDateTime dateTime1 = QDateTime::fromString(dateTimeStr1, "yyyy-MM-ddThh:mm:ss");
+    int timet1 = dateTime1.toTime_t();
+    QDateTime dateTime2 = QDateTime::fromString(dateTimeStr2, "yyyy-MM-ddThh:mm:ss");
+    int timet2 = dateTime2.toTime_t();
+
+    int minusTimet = timet1 - QDateTime::fromString(QDateTime::currentDateTime().toString("yyyy-MM-dd 00:00:00"), "yyyy-MM-dd 00:00:00").toTime_t();
+    timet2 -= minusTimet;
+
+    return Chart::chartTime2(timet2);
+}
+
 QList<Bean::Sleep> Db::querySleep(QString queryStr){
     QList<Bean::Sleep> sleeps;
 
     QSqlQuery query(queryStr);
     while (query.next()){
         Bean::Sleep sleep;
-        sleep.setDate(getChartTime(query.value("date").toString()));
-        sleep.setStart(getChartTime(query.value("start").toString()));
-        sleep.setEnd(getChartTime(query.value("end").toString()));
-        sleep.setDeepStart01(getChartTime(query.value("deepStart01").toString()));
-        sleep.setDeepEnd01(getChartTime(query.value("deepEnd01").toString()));
-        sleep.setDeepStart02(getChartTime(query.value("deepStart02").toString()));
-        sleep.setDeepEnd02(getChartTime(query.value("deepEnd02").toString()));
-        sleep.setDeepStart03(getChartTime(query.value("deepStart03").toString()));
-        sleep.setDeepEnd03(getChartTime(query.value("deepEnd03").toString()));
-        sleep.setDeepStart04(getChartTime(query.value("deepStart04").toString()));
-        sleep.setDeepEnd04(getChartTime(query.value("deepEnd04").toString()));
-        sleep.setDeepStart05(getChartTime(query.value("deepStart05").toString()));
-        sleep.setDeepEnd05(getChartTime(query.value("deepEnd05").toString()));
-        sleep.setDeepStart06(getChartTime(query.value("deepStart06").toString()));
-        sleep.setDeepEnd06(getChartTime(query.value("deepEnd06").toString()));
-        sleep.setDeepStart07(getChartTime(query.value("deepStart07").toString()));
-        sleep.setDeepEnd07(getChartTime(query.value("deepEnd07").toString()));
-        sleep.setDeepStart08(getChartTime(query.value("deepStart08").toString()));
-        sleep.setDeepEnd08(getChartTime(query.value("deepEnd08").toString()));
-        sleep.setDeepStart09(getChartTime(query.value("deepStart09").toString()));
-        sleep.setDeepEnd09(getChartTime(query.value("deepEnd09").toString()));
-        sleep.setDeepStart10(getChartTime(query.value("deepStart10").toString()));
-        sleep.setDeepEnd10(getChartTime(query.value("deepEnd10").toString()));
-        sleep.setAwakeStart01(getChartTime(query.value("awakeStart01").toString()));
-        sleep.setAwakeEnd01(getChartTime(query.value("awakeEnd01").toString()));
-        sleep.setAwakeStart02(getChartTime(query.value("awakeStart02").toString()));
-        sleep.setAwakeEnd02(getChartTime(query.value("awakeEnd02").toString()));
-        sleep.setAwakeStart03(getChartTime(query.value("awakeStart03").toString()));
-        sleep.setAwakeEnd03(getChartTime(query.value("awakeEnd03").toString()));
-        sleep.setAwakeStart04(getChartTime(query.value("awakeStart04").toString()));
-        sleep.setAwakeEnd04(getChartTime(query.value("awakeEnd04").toString()));
+        QString dateStr = query.value("date").toString();
+        sleep.setDate(getChartTime(dateStr));
+        sleep.setStart(getTruncChartTime(dateStr, query.value("start").toString()));
+        sleep.setEnd(getTruncChartTime(dateStr, query.value("end").toString()));
+        sleep.setDeepStart01(getTruncChartTime(dateStr, query.value("deepStart01").toString()));
+        sleep.setDeepEnd01(getTruncChartTime(dateStr, query.value("deepEnd01").toString()));
+        sleep.setDeepStart02(getTruncChartTime(dateStr, query.value("deepStart02").toString()));
+        sleep.setDeepEnd02(getTruncChartTime(dateStr, query.value("deepEnd02").toString()));
+        sleep.setDeepStart03(getTruncChartTime(dateStr, query.value("deepStart03").toString()));
+        sleep.setDeepEnd03(getTruncChartTime(dateStr, query.value("deepEnd03").toString()));
+        sleep.setDeepStart04(getTruncChartTime(dateStr, query.value("deepStart04").toString()));
+        sleep.setDeepEnd04(getTruncChartTime(dateStr, query.value("deepEnd04").toString()));
+        sleep.setDeepStart05(getTruncChartTime(dateStr, query.value("deepStart05").toString()));
+        sleep.setDeepEnd05(getTruncChartTime(dateStr, query.value("deepEnd05").toString()));
+        sleep.setDeepStart06(getTruncChartTime(dateStr, query.value("deepStart06").toString()));
+        sleep.setDeepEnd06(getTruncChartTime(dateStr, query.value("deepEnd06").toString()));
+        sleep.setDeepStart07(getTruncChartTime(dateStr, query.value("deepStart07").toString()));
+        sleep.setDeepEnd07(getTruncChartTime(dateStr, query.value("deepEnd07").toString()));
+        sleep.setDeepStart08(getTruncChartTime(dateStr, query.value("deepStart08").toString()));
+        sleep.setDeepEnd08(getTruncChartTime(dateStr, query.value("deepEnd08").toString()));
+        sleep.setDeepStart09(getTruncChartTime(dateStr, query.value("deepStart09").toString()));
+        sleep.setDeepEnd09(getTruncChartTime(dateStr, query.value("deepEnd09").toString()));
+        sleep.setDeepStart10(getTruncChartTime(dateStr, query.value("deepStart10").toString()));
+        sleep.setDeepEnd10(getTruncChartTime(dateStr, query.value("deepEnd10").toString()));
+        sleep.setAwakeStart01(getTruncChartTime(dateStr, query.value("awakeStart01").toString()));
+        sleep.setAwakeEnd01(getTruncChartTime(dateStr, query.value("awakeEnd01").toString()));
+        sleep.setAwakeStart02(getTruncChartTime(dateStr, query.value("awakeStart02").toString()));
+        sleep.setAwakeEnd02(getTruncChartTime(dateStr, query.value("awakeEnd02").toString()));
+        sleep.setAwakeStart03(getTruncChartTime(dateStr, query.value("awakeStart03").toString()));
+        sleep.setAwakeEnd03(getTruncChartTime(dateStr, query.value("awakeEnd03").toString()));
+        sleep.setAwakeStart04(getTruncChartTime(dateStr, query.value("awakeStart04").toString()));
+        sleep.setAwakeEnd04(getTruncChartTime(dateStr, query.value("awakeEnd04").toString()));
         sleeps.append(sleep);
     }
 
