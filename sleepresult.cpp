@@ -260,12 +260,15 @@ void SleepResult::makeChart(double lowlimit, double uplimit
     if(m_ChartViewer->getChart() != NULL){
         delete m_ChartViewer->getChart();
     }
-    m_ChartViewer->setChart(sleep(lowlimit, uplimit
-                                  , labels, label_len
-                                  , taskNo, task_len
-                                  , startDate, startDate_len
-                                  , endDate, endDate_len
-                                  , colors, color_len));
+    if(!(label_len == 0 || task_len == 0 || startDate_len == 0 || endDate_len == 0 || color_len == 0)){
+        m_ChartViewer->setChart(sleep(lowlimit, uplimit
+                                      , labels, label_len
+                                      , taskNo, task_len
+                                      , startDate, startDate_len
+                                      , endDate, endDate_len
+                                      , colors, color_len));
+        m_ChartViewer->updateDisplay();
+    }
 }
 
 BaseChart *SleepResult::sleep(double lowlimit, double uplimit

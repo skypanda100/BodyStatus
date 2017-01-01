@@ -4,7 +4,8 @@
 using namespace Bean;
 
 Sleep::Sleep()
-    : m_start(0)
+    : m_date(0)
+    , m_start(0)
     , m_end(0)
     , m_deepStart01(0)
     , m_deepEnd01(0)

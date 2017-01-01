@@ -85,6 +85,7 @@ void MainWindow::initConnect(){
     connect(m_darkStyleAction, SIGNAL(triggered()), this, SLOT(onDarkStyleTriggered()));
     connect(m_sleepAction, SIGNAL(triggered()), this, SLOT(onSleepTriggered()));
     connect(m_printAction, SIGNAL(triggered()), this, SLOT(onPrintTriggered()));
+    connect(m_sleepInput, SIGNAL(search(QList<Bean::Sleep>)), m_sleepResult, SLOT(onSearch(QList<Bean::Sleep>)));
 }
 
 void MainWindow::onSleepTriggered(){

@@ -11,9 +11,12 @@ SleepInput::~SleepInput(){
     delete m_fDateEdit;
     delete m_tDateEdit;
     delete m_searchButton;
+    delete m_db;
 }
 
 void SleepInput::initUI(){
+    m_db = new Db;
+
     //title
     this->setWindowTitle("Sleep");
     this->setWindowIcon(QIcon(":/image/sleep.png"));
@@ -57,5 +60,19 @@ void SleepInput::initConnect(){
 }
 
 void SleepInput::onSearchClicked(){
+    QDate fDate = m_fDateEdit->date();
+    QDate tDate = m_tDateEdit->date();
+
+    QString queryStr = QString("select * from status_sleep where date >= '%1' and date <= '%2' order by date desc")
+            .arg(fDate.toString("yyyy-MM-dd 00:00:00"))
+            .arg(tDate.toString("yyyy-MM-dd 00:00:00"));
+
+    QList<Bean::Sleep> sleepLst = m_db->querySleep(queryStr);
+    if(sleepLst.count() > 0){
+        emit search(sleepLst);
+    }else{
+        QMessageBox::critical(0, QObject::tr("Search"), "there are no results");
+    }
+
     this->accept();
 }
