@@ -58,6 +58,15 @@ void SleepResult::makeData(){
                     ,"yyyy-MM-dd hh:mm");
         sleep.setDeepEnd01(Chart::chartTime2(deepEndDateTime.toTime_t()));
 
+        QDateTime awakeStartDateTime = QDateTime::fromString(
+                    QString("%1 %2").arg(QDateTime::currentDateTime().addDays(1).toString("yyyy-MM-dd")).arg("03:02")
+                    ,"yyyy-MM-dd hh:mm");
+        sleep.setAwakeStart01(Chart::chartTime2(awakeStartDateTime.toTime_t()));
+        QDateTime awakeEndDateTime = QDateTime::fromString(
+                    QString("%1 %2").arg(QDateTime::currentDateTime().addDays(1).toString("yyyy-MM-dd")).arg("03:32")
+                    ,"yyyy-MM-dd hh:mm");
+        sleep.setAwakeEnd01(Chart::chartTime2(awakeEndDateTime.toTime_t()));
+
         m_sleepLst.append(sleep);
     }
     //
