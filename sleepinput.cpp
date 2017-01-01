@@ -63,7 +63,7 @@ void SleepInput::onSearchClicked(){
     QDate fDate = m_fDateEdit->date();
     QDate tDate = m_tDateEdit->date();
 
-    QString queryStr = QString("select * from status_sleep where date >= '%1' and date <= '%2' order by date desc")
+    QString queryStr = QString("select * from status_sleep where date >= '%1' and date <= '%2' order by date asc")
             .arg(fDate.toString("yyyy-MM-dd 00:00:00"))
             .arg(tDate.toString("yyyy-MM-dd 00:00:00"));
 

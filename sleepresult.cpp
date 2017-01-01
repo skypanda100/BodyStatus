@@ -317,7 +317,7 @@ BaseChart *SleepResult::sleep(double lowlimit, double uplimit
     layer->setXData(DoubleArray(taskNo, task_len));
     layer->setBorderColor(Chart::SameAsMainColor);
 
-    layer->setDataWidth(200 * 4 / 5 / label_len);
+    layer->setDataWidth(c->getPlotArea()->getHeight() / label_len * 1 / 2);
 
     c->makeChart();
 

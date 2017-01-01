@@ -6,9 +6,9 @@
 #include "style.h"
 #include "sleep.h"
 
-#define LATENT_COLOR    0x998cc665
-#define DEEP_COLOR      0x5044a340
-#define AWAKE_COLOR     0x99ff9900
+#define LATENT_COLOR    0x8000608d
+#define DEEP_COLOR      0xaa00608d
+#define AWAKE_COLOR     0xaaff69b4
 class SleepResult : public QWidget{
     Q_OBJECT
 public:
