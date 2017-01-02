@@ -12,13 +12,20 @@ SleepResult::~SleepResult(){
 }
 
 void SleepResult::onSearch(QList<Bean::Sleep> sleepLst){
-    this->m_sleepLst.clear();
-    this->m_sleepLst = sleepLst;
-    this->makeData();
+    this->m_sleepLst01.clear();
+    this->m_sleepLst02.clear();
+    for(Bean::Sleep sleep: sleepLst){
+        if(sleep.person() == 0){
+            this->m_sleepLst01.append(sleep);
+        }else{
+            this->m_sleepLst02.append(sleep);
+        }
+    }
+    this->makeChart();
 }
 
 void SleepResult::onStyle(){
-    this->makeData();
+    this->makeChart();
 }
 
 void SleepResult::initUI(){
@@ -35,75 +42,123 @@ void SleepResult::initUI(){
     mainLayout->addWidget(m_ChartViewer);
 
     this->setLayout(mainLayout);
-
-    /*
-    //test
-    for(int i = 0;i < 30;i++){
-        QDateTime dateTime = QDateTime::currentDateTime().addDays(i);
-        Bean::Sleep sleep;
-        sleep.setDate(Chart::chartTime2(dateTime.toTime_t()));
-        QDateTime startDateTime = QDateTime::fromString(
-                    QString("%1 %2").arg(dateTime.toString("yyyy-MM-dd")).arg("23:00")
-                    ,"yyyy-MM-dd hh:mm");
-        sleep.setStart(Chart::chartTime2(startDateTime.toTime_t()));
-        QDateTime endDateTime = QDateTime::fromString(
-                    QString("%1 %2").arg(dateTime.addDays(1).toString("yyyy-MM-dd")).arg("07:32")
-                    ,"yyyy-MM-dd hh:mm");
-        sleep.setEnd(Chart::chartTime2(endDateTime.toTime_t()));
-
-        QDateTime deepStartDateTime = QDateTime::fromString(
-                    QString("%1 %2").arg(dateTime.addDays(1).toString("yyyy-MM-dd")).arg("01:02")
-                    ,"yyyy-MM-dd hh:mm");
-        sleep.setDeepStart01(Chart::chartTime2(deepStartDateTime.toTime_t()));
-        QDateTime deepEndDateTime = QDateTime::fromString(
-                    QString("%1 %2").arg(dateTime.addDays(1).toString("yyyy-MM-dd")).arg("02:32")
-                    ,"yyyy-MM-dd hh:mm");
-        sleep.setDeepEnd01(Chart::chartTime2(deepEndDateTime.toTime_t()));
-
-        QDateTime awakeStartDateTime = QDateTime::fromString(
-                    QString("%1 %2").arg(dateTime.addDays(1).toString("yyyy-MM-dd")).arg("03:02")
-                    ,"yyyy-MM-dd hh:mm");
-        sleep.setAwakeStart01(Chart::chartTime2(awakeStartDateTime.toTime_t()));
-        QDateTime awakeEndDateTime = QDateTime::fromString(
-                    QString("%1 %2").arg(dateTime.addDays(1).toString("yyyy-MM-dd")).arg("03:32")
-                    ,"yyyy-MM-dd hh:mm");
-        sleep.setAwakeEnd01(Chart::chartTime2(awakeEndDateTime.toTime_t()));
-
-        m_sleepLst.append(sleep);
-    }
-    this->makeData();
-    */
 }
 
 void SleepResult::initConnect(){
 }
 
-void SleepResult::makeData(){
+void SleepResult::makeChart(){
+    if(m_ChartViewer->getChart() != NULL){
+        delete m_ChartViewer->getChart();
+    }
+    MultiChart *mc = new MultiChart(this->width(), this->height() + 60, GET_STYLE().main_bg_color);
+    //gantt
+    if(m_sleepLst01.count() > 0 && m_sleepLst02.count() > 0){
+        BaseChart *chart01 = sleepGantt(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst01);
+        BaseChart *chart02 = sleepGantt(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst02);
+        mc->addChart(0, 0, chart01);
+        mc->addChart(0, chart01->getHeight(), chart02);
+    }else if(m_sleepLst01.count() > 0 && m_sleepLst02.count() == 0){
+        BaseChart *chart01 = sleepGantt(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst01);
+        mc->addChart(0, 0, chart01);
+    }else if(m_sleepLst01.count() == 0 && m_sleepLst02.count() > 0){
+        BaseChart *chart02 = sleepGantt(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst02);
+        mc->addChart(0, 0, chart02);
+    }else{
+
+    }
+    //stack
+    if(m_sleepLst01.count() > 0 && m_sleepLst02.count() > 0){
+        BaseChart *chart01 = sleepStack(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst01);
+        BaseChart *chart02 = sleepStack(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst02);
+        mc->addChart(0, 0, chart01);
+        mc->addChart(0, chart01->getHeight(), chart02);
+    }else if(m_sleepLst01.count() > 0 && m_sleepLst02.count() == 0){
+        BaseChart *chart01 = sleepStack(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst01);
+        mc->addChart(0, 0, chart01);
+    }else if(m_sleepLst01.count() == 0 && m_sleepLst02.count() > 0){
+        BaseChart *chart02 = sleepStack(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst02);
+        mc->addChart(0, 0, chart02);
+    }else{
+
+    }
+
+
+    mc->makeChart();
+    m_ChartViewer->setChart(mc);
+    m_ChartViewer->updateDisplay();
+}
+
+BaseChart *SleepResult::sleepGantt(int width, int height, QList<Bean::Sleep> sleepLst){
+    if(sleepLst.count() == 0){
+        return NULL;
+    }
+
+    DataGantt dataGantt;
+    makeDataGantt(&dataGantt, sleepLst);
+
+    //gantt
+    XYChart *c = new XYChart(width, height, GET_STYLE().main_bg_color, -1, 0);
+
+    c->setPlotArea(40, 20, width - 40, height - 20
+                   , GET_STYLE().plot_bg_color, -1
+                   , -1
+                   , GET_STYLE().grid_color
+                   , Chart::Transparent
+        )->setGridWidth(1, 1, 1, 1);
+
+    c->swapXY();
+
+    c->yAxis()->setDateScale(dataGantt.lowlimit - 600, dataGantt.uplimit + 600, 600);
+
+    c->yAxis()->setMultiFormat(Chart::StartOfHourFilter(), "<*font=arialbd.ttf*>{value|h:n}"
+                , Chart::StartOfMinuteFilter(), "<*font=arialbd.ttf*>{value|n}");
+
+    c->yAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
+
+    c->setYAxisOnRight();
+
+    c->xAxis()->setLabels(DoubleArray(dataGantt.labels, dataGantt.label_len));
+
+    c->xAxis()->setMultiFormat(Chart::StartOfMonthFilter(), "<*font=arialbd.ttf*>{value|d mmm}"
+                , Chart::StartOfDayFilter(), "<*font=arialbd.ttf*>{value|d}");
+
+    c->xAxis()->setReverse();
+
+    c->xAxis()->setTickOffset(1);
+
+    c->xAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
+
+    BoxWhiskerLayer *layer_gantt = c->addBoxWhiskerLayer2(DoubleArray(dataGantt.startDate, dataGantt.startDate_len), DoubleArray(dataGantt.endDate, dataGantt.endDate_len)
+                                                    , DoubleArray(), DoubleArray()
+                                                    , DoubleArray(), IntArray(dataGantt.colors, dataGantt.color_len));
+    layer_gantt->setXData(DoubleArray(dataGantt.taskNo, dataGantt.task_len));
+    layer_gantt->setBorderColor(Chart::Transparent);
+
+    layer_gantt->setDataWidth(c->getPlotArea()->getHeight() / dataGantt.label_len * 2 / 3);
+
+    delete dataGantt.labels;
+    delete dataGantt.taskNo;
+    delete dataGantt.startDate;
+    delete dataGantt.endDate;
+    delete dataGantt.colors;
+
+    return c;
+}
+
+void SleepResult::makeDataGantt(DataGantt *dataGantt, QList<Bean::Sleep> sleepLst){
     QList<double> labels;
     QList<double> taskNos;
     QList<double> startDates;
     QList<double> endDates;
     QList<int> colors;
 
-    QList<double> sleepSums;
-    QList<double> deepSleepSums;
-    QList<double> awakeSums;
-
-    int sleepCount = m_sleepLst.count();
+    int sleepCount = sleepLst.count();
     for(int i = 0;i < sleepCount;i++){
-        Bean::Sleep sleep = m_sleepLst[i];
+        Bean::Sleep sleep = sleepLst[i];
 
         //date
         labels.append(sleep.date());
-
-        //sleepSum
-        sleepSums.append(sleep.sleepSum());
-
-        //deepSleepSum
-        deepSleepSums.append(sleep.deepSleepSum());
-
-        //awakeSums
-        awakeSums.append(sleep.awakeSum());
 
         //latent sleep
         startDates.append(sleep.start());
@@ -207,31 +262,10 @@ void SleepResult::makeData(){
     int *c_colors = new int[colors.count()];
     double lowlimit = 0;
     double uplimit = 0;
-    double *c_sleepSums = new double[sleepSums.count()];
-    double *c_deepSleepSums = new double[deepSleepSums.count()];
-    double *c_awakeSums = new double[awakeSums.count()];
 
     int index = 0;
     for(double label : labels){
         c_labels[index] = label;
-        index++;
-    }
-
-    index = 0;
-    for(double sum : sleepSums){
-        c_sleepSums[index] = sum;
-        index++;
-    }
-
-    index = 0;
-    for(double sum : deepSleepSums){
-        c_deepSleepSums[index] = sum;
-        index++;
-    }
-
-    index = 0;
-    for(double sum : awakeSums){
-        c_awakeSums[index] = sum;
         index++;
     }
 
@@ -273,138 +307,123 @@ void SleepResult::makeData(){
         index++;
     }
 
-    makeChart(lowlimit, uplimit
-              , c_labels, labels.count()
-              , c_taskNos, taskNos.count()
-              , c_startDates, startDates.count()
-              , c_endDates, endDates.count()
-              , c_colors, colors.count()
-              , c_sleepSums, sleepSums.count()
-              , c_deepSleepSums, deepSleepSums.count()
-              , c_awakeSums, awakeSums.count());
-
-    delete c_labels;
-    delete c_taskNos;
-    delete c_startDates;
-    delete c_endDates;
-    delete c_colors;
-    delete c_sleepSums;
-    delete c_deepSleepSums;
-    delete c_awakeSums;
+    dataGantt->lowlimit = lowlimit;
+    dataGantt->uplimit = uplimit;
+    dataGantt->labels = c_labels;
+    dataGantt->label_len = labels.count();
+    dataGantt->taskNo = c_taskNos;
+    dataGantt->task_len = taskNos.count();
+    dataGantt->startDate = c_startDates;
+    dataGantt->startDate_len = startDates.count();
+    dataGantt->endDate = c_endDates;
+    dataGantt->endDate_len = endDates.count();
+    dataGantt->colors = c_colors;
+    dataGantt->color_len = colors.count();
 }
 
-void SleepResult::makeChart(double lowlimit, double uplimit
-                            , double *labels, int label_len
-                            , double *taskNo, int task_len
-                            , double *startDate, int startDate_len
-                            , double *endDate, int endDate_len
-                            , int *colors, int color_len
-                            , double *sleepSums, int sleepSum_len
-                            , double *deepSleepSums, int deepSleepSum_len
-                            , double *awakeSums, int awakeSum_len){
-    if(m_ChartViewer->getChart() != NULL){
-        delete m_ChartViewer->getChart();
+BaseChart *SleepResult::sleepStack(int width, int height, QList<Bean::Sleep> sleepLst){
+    if(sleepLst.count() == 0){
+        return NULL;
     }
-    if(!(label_len == 0 || task_len == 0 || startDate_len == 0 || endDate_len == 0 || color_len == 0)){
-        m_ChartViewer->setChart(sleep(lowlimit, uplimit
-                                      , labels, label_len
-                                      , taskNo, task_len
-                                      , startDate, startDate_len
-                                      , endDate, endDate_len
-                                      , colors, color_len
-                                      , sleepSums, sleepSum_len
-                                      , deepSleepSums, deepSleepSum_len
-                                      , awakeSums, awakeSum_len));
-        m_ChartViewer->updateDisplay();
-    }
-}
 
-BaseChart *SleepResult::sleep(double lowlimit, double uplimit
-                              , double *labels, int label_len
-                              , double *taskNo, int task_len
-                              , double *startDate, int startDate_len
-                              , double *endDate, int endDate_len
-                              , int *colors, int color_len
-                              , double *sleepSums, int sleepSum_len
-                              , double *deepSleepSums, int deepSleepSum_len
-                              , double *awakeSums, int awakeSum_len){
-
-    MultiChart *mc = new MultiChart(this->width(), this->height() + 60, GET_STYLE().main_bg_color);
-
-    //gantt
-    XYChart *c_gantt = new XYChart(mc->getWidth(), mc->getHeight() / 2, GET_STYLE().main_bg_color, -1, 0);
-
-    c_gantt->setPlotArea(40, 20, c_gantt->getWidth() - 40, c_gantt->getHeight() - 20
-                   , GET_STYLE().plot_bg_color, -1
-                   , -1
-                   , GET_STYLE().grid_color
-                   , Chart::Transparent
-        )->setGridWidth(1, 1, 1, 1);
-
-    c_gantt->swapXY();
-
-    c_gantt->yAxis()->setDateScale(lowlimit - 600, uplimit + 600, 600);
-
-    c_gantt->yAxis()->setMultiFormat(Chart::StartOfHourFilter(), "<*font=arialbd.ttf*>{value|h:n}"
-                , Chart::StartOfMinuteFilter(), "<*font=arialbd.ttf*>{value|n}");
-
-    c_gantt->yAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
-
-    c_gantt->setYAxisOnRight();
-
-    c_gantt->xAxis()->setLabels(DoubleArray(labels, label_len));
-
-    c_gantt->xAxis()->setMultiFormat(Chart::StartOfMonthFilter(), "<*font=arialbd.ttf*>{value|d mmm}"
-                , Chart::StartOfDayFilter(), "<*font=arialbd.ttf*>{value|d}");
-
-    c_gantt->xAxis()->setReverse();
-
-    c_gantt->xAxis()->setTickOffset(1);
-
-    c_gantt->xAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
-
-    BoxWhiskerLayer *layer_gantt = c_gantt->addBoxWhiskerLayer2(DoubleArray(startDate, startDate_len), DoubleArray(endDate, endDate_len)
-                                                    , DoubleArray(), DoubleArray()
-                                                    , DoubleArray(), IntArray(colors, color_len));
-    layer_gantt->setXData(DoubleArray(taskNo, task_len));
-    layer_gantt->setBorderColor(Chart::Transparent);
-
-    layer_gantt->setDataWidth(c_gantt->getPlotArea()->getHeight() / label_len * 2 / 3);
-
-    mc->addChart(0, 0, c_gantt);
+    DataStack dataStack;
+    makeDataStack(&dataStack, sleepLst);
 
     //stack
-    XYChart *c_stack = new XYChart(mc->getWidth(), mc->getHeight() / 2, GET_STYLE().main_bg_color, -1, 0);
+    XYChart *c = new XYChart(width, height, GET_STYLE().main_bg_color, -1, 0);
 
-    c_stack->setPlotArea(40, 20, c_stack->getWidth() - 40, c_stack->getHeight() - 100
+    c->setPlotArea(40, 20, c->getWidth() - 40, c->getHeight() - 20
                          , GET_STYLE().plot_bg_color, -1
                          , -1
                          , GET_STYLE().grid_color
                          , GET_STYLE().grid_color
               )->setGridWidth(1, 1, 1, 1);
 
-    c_stack->yAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
+    c->yAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
 
-    c_stack->xAxis2()->setLabels(DoubleArray(labels, label_len));
+    c->xAxis2()->setLabels(DoubleArray(dataStack.labels, dataStack.label_len));
 
-    c_stack->xAxis2()->setMultiFormat(Chart::StartOfMonthFilter(), "<*font=arialbd.ttf*>{value|d mmm}"
+    c->xAxis2()->setMultiFormat(Chart::StartOfMonthFilter(), "<*font=arialbd.ttf*>{value|d mmm}"
                 , Chart::StartOfDayFilter(), "<*font=arialbd.ttf*>{value|d}");
 
-    c_stack->xAxis2()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
+    c->xAxis2()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
 
-    AreaLayer *layer_stack = c_stack->addAreaLayer(Chart::Stack);
+    AreaLayer *layer_stack = c->addAreaLayer(Chart::Stack);
     layer_stack->setBorderColor(Chart::SameAsMainColor);
-    layer_stack->addDataSet(DoubleArray(awakeSums, awakeSum_len), AWAKE_COLOR,
+    layer_stack->addDataSet(DoubleArray(dataStack.awakeSums, dataStack.awakeSum_len), AWAKE_COLOR,
         "awake");
-    layer_stack->addDataSet(DoubleArray(deepSleepSums, deepSleepSum_len), DEEP_COLOR,
+    layer_stack->addDataSet(DoubleArray(dataStack.deepSleepSums, dataStack.deepSleepSum_len), DEEP_COLOR,
         "deep sleep");
-    layer_stack->addDataSet(DoubleArray(sleepSums, sleepSum_len), LATENT_COLOR,
+    layer_stack->addDataSet(DoubleArray(dataStack.sleepSums, dataStack.sleepSum_len), LATENT_COLOR,
         "sleep");
 
-    mc->addChart(0, c_gantt->getHeight(), c_stack);
+    delete dataStack.labels;
+    delete dataStack.awakeSums;
+    delete dataStack.deepSleepSums;
+    delete dataStack.sleepSums;
 
-
-    mc->makeChart();
-
-    return mc;
+    return c;
 }
+
+void SleepResult::makeDataStack(DataStack *dataStack, QList<Bean::Sleep> sleepLst){
+    QList<double> labels;
+    QList<double> sleepSums;
+    QList<double> deepSleepSums;
+    QList<double> awakeSums;
+
+    int sleepCount = sleepLst.count();
+    for(int i = 0;i < sleepCount;i++){
+        Bean::Sleep sleep = sleepLst[i];
+
+        //date
+        labels.append(sleep.date());
+
+        //sleepSum
+        sleepSums.append(sleep.sleepSum());
+
+        //deepSleepSum
+        deepSleepSums.append(sleep.deepSleepSum());
+
+        //awakeSums
+        awakeSums.append(sleep.awakeSum());
+    }
+
+    double *c_labels = new double[labels.count()];
+    double *c_sleepSums = new double[sleepSums.count()];
+    double *c_deepSleepSums = new double[deepSleepSums.count()];
+    double *c_awakeSums = new double[awakeSums.count()];
+
+    int index = 0;
+    for(double label : labels){
+        c_labels[index] = label;
+        index++;
+    }
+
+    index = 0;
+    for(double sum : sleepSums){
+        c_sleepSums[index] = sum;
+        index++;
+    }
+
+    index = 0;
+    for(double sum : deepSleepSums){
+        c_deepSleepSums[index] = sum;
+        index++;
+    }
+
+    index = 0;
+    for(double sum : awakeSums){
+        c_awakeSums[index] = sum;
+        index++;
+    }
+
+    dataStack->labels = c_labels;
+    dataStack->label_len = labels.count();
+    dataStack->sleepSums = c_sleepSums;
+    dataStack->sleepSum_len = sleepSums.count();
+    dataStack->deepSleepSums = c_deepSleepSums;
+    dataStack->deepSleepSum_len = deepSleepSums.count();
+    dataStack->awakeSums = c_awakeSums;
+    dataStack->awakeSum_len = awakeSums.count();
+}
+

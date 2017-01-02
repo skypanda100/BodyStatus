@@ -111,7 +111,11 @@ public:
     double awakeSum() const;
     void setAwakeSum(double awakeSum);
 
+    int person() const;
+    void setPerson(int person);
+
 private:
+    int m_person;
     double m_date;
     double m_start;
     double m_end;

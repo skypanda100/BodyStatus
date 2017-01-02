@@ -4,7 +4,8 @@
 using namespace Bean;
 
 Sleep::Sleep()
-    : m_date(0)
+    : m_person(0)
+    , m_date(0)
     , m_start(0)
     , m_end(0)
     , m_sleepSum(0)
@@ -383,5 +384,15 @@ double Sleep::awakeSum() const
 void Sleep::setAwakeSum(double awakeSum)
 {
     m_awakeSum = awakeSum;
+}
+
+int Sleep::person() const
+{
+    return m_person;
+}
+
+void Sleep::setPerson(int person)
+{
+    m_person = person;
 }
 

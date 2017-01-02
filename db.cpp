@@ -56,6 +56,8 @@ QList<Bean::Sleep> Db::querySleep(QString queryStr){
     while (query.next()){
         Bean::Sleep sleep;
 
+        sleep.setPerson(query.value("person").toInt(0));
+
         QString dateStr = query.value("date").toString();
         sleep.setDate(getChartTime(dateStr));
 

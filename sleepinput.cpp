@@ -33,6 +33,7 @@ void SleepInput::initUI(){
     m_personComboBox = new QComboBox;
     m_personComboBox->insertItem(0, "gg");
     m_personComboBox->insertItem(1, "tt");
+    m_personComboBox->insertItem(2, "both");
 
     QLabel *fromLabel = new QLabel;
     fromLabel->setFont(labelFont);
@@ -75,10 +76,17 @@ void SleepInput::onSearchClicked(){
     QDate fDate = m_fDateEdit->date();
     QDate tDate = m_tDateEdit->date();
 
-    QString queryStr = QString("select * from status_sleep where person = %1 and date >= '%2' and date <= '%3' order by date asc")
-            .arg(personId)
-            .arg(fDate.toString("yyyy-MM-dd 00:00:00"))
-            .arg(tDate.toString("yyyy-MM-dd 00:00:00"));
+    QString queryStr;
+    if(personId > 1){
+        queryStr = QString("select * from status_sleep where date >= '%1' and date <= '%2' order by date asc")
+                .arg(fDate.toString("yyyy-MM-dd 00:00:00"))
+                .arg(tDate.toString("yyyy-MM-dd 00:00:00"));
+    }else{
+        queryStr = QString("select * from status_sleep where person = %1 and date >= '%2' and date <= '%3' order by date asc")
+                .arg(personId)
+                .arg(fDate.toString("yyyy-MM-dd 00:00:00"))
+                .arg(tDate.toString("yyyy-MM-dd 00:00:00"));
+    }
 
     QList<Bean::Sleep> sleepLst = m_db->querySleep(queryStr);
     if(sleepLst.count() > 0){
