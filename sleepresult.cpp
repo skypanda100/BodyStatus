@@ -11,7 +11,8 @@ SleepResult::~SleepResult(){
     delete m_ChartViewer;
 }
 
-void SleepResult::onSearch(QList<Bean::Sleep> sleepLst){
+void SleepResult::onSearch(int moduleId, QList<Bean::Sleep> sleepLst){
+    this->m_moduleId = moduleId;
     this->m_sleepLst01.clear();
     this->m_sleepLst02.clear();
     for(Bean::Sleep sleep: sleepLst){
@@ -52,34 +53,39 @@ void SleepResult::makeChart(){
         delete m_ChartViewer->getChart();
     }
     MultiChart *mc = new MultiChart(this->width(), this->height() + 60, GET_STYLE().main_bg_color);
-    //gantt
-    if(m_sleepLst01.count() > 0 && m_sleepLst02.count() > 0){
-        BaseChart *chart01 = sleepGantt(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst01);
-        BaseChart *chart02 = sleepGantt(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst02);
-        mc->addChart(0, 0, chart01);
-        mc->addChart(0, chart01->getHeight(), chart02);
-    }else if(m_sleepLst01.count() > 0 && m_sleepLst02.count() == 0){
-        BaseChart *chart01 = sleepGantt(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst01);
-        mc->addChart(0, 0, chart01);
-    }else if(m_sleepLst01.count() == 0 && m_sleepLst02.count() > 0){
-        BaseChart *chart02 = sleepGantt(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst02);
-        mc->addChart(0, 0, chart02);
-    }else{
+    if(m_moduleId == 0){
+        //gantt
+        if(m_sleepLst01.count() > 0 && m_sleepLst02.count() > 0){
+            BaseChart *chart01 = sleepGantt(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst01);
+            BaseChart *chart02 = sleepGantt(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst02);
+            mc->addChart(0, 0, chart01);
+            mc->addChart(0, chart01->getHeight(), chart02);
+        }else if(m_sleepLst01.count() > 0 && m_sleepLst02.count() == 0){
+            BaseChart *chart01 = sleepGantt(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst01);
+            mc->addChart(0, 0, chart01);
+        }else if(m_sleepLst01.count() == 0 && m_sleepLst02.count() > 0){
+            BaseChart *chart02 = sleepGantt(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst02);
+            mc->addChart(0, 0, chart02);
+        }else{
 
-    }
-    //stack
-    if(m_sleepLst01.count() > 0 && m_sleepLst02.count() > 0){
-        BaseChart *chart01 = sleepStack(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst01);
-        BaseChart *chart02 = sleepStack(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst02);
-        mc->addChart(0, 0, chart01);
-        mc->addChart(0, chart01->getHeight(), chart02);
-    }else if(m_sleepLst01.count() > 0 && m_sleepLst02.count() == 0){
-        BaseChart *chart01 = sleepStack(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst01);
-        mc->addChart(0, 0, chart01);
-    }else if(m_sleepLst01.count() == 0 && m_sleepLst02.count() > 0){
-        BaseChart *chart02 = sleepStack(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst02);
-        mc->addChart(0, 0, chart02);
-    }else{
+        }
+    }else if(m_moduleId == 1){
+        //stack
+        if(m_sleepLst01.count() > 0 && m_sleepLst02.count() > 0){
+            BaseChart *chart01 = sleepStack(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst01);
+            BaseChart *chart02 = sleepStack(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst02);
+            mc->addChart(0, 0, chart01);
+            mc->addChart(0, chart01->getHeight(), chart02);
+        }else if(m_sleepLst01.count() > 0 && m_sleepLst02.count() == 0){
+            BaseChart *chart01 = sleepStack(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst01);
+            mc->addChart(0, 0, chart01);
+        }else if(m_sleepLst01.count() == 0 && m_sleepLst02.count() > 0){
+            BaseChart *chart02 = sleepStack(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst02);
+            mc->addChart(0, 0, chart02);
+        }else{
+
+        }
+    }else if(m_moduleId == 2){
 
     }
 

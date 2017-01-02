@@ -47,7 +47,7 @@ public:
     ~SleepResult();
 
 public slots:
-    void onSearch(QList<Bean::Sleep>);
+    void onSearch(int, QList<Bean::Sleep>);
     void onStyle();
 
 private:
@@ -61,6 +61,7 @@ private:
     void makeDataStack(DataStack *, QList<Bean::Sleep>);
 
 private:
+    int m_moduleId;
     QChartViewer *m_ChartViewer;
     QList<Bean::Sleep> m_sleepLst01;
     QList<Bean::Sleep> m_sleepLst02;
