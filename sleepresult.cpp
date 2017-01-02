@@ -86,7 +86,21 @@ void SleepResult::makeChart(){
 
         }
     }else if(m_moduleId == 2){
+        //line
+        if(m_sleepLst01.count() > 0 && m_sleepLst02.count() > 0){
+            BaseChart *chart01 = sleepLine(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst01);
+            BaseChart *chart02 = sleepLine(mc->getWidth(), (mc->getHeight() - 80) / 2, m_sleepLst02);
+            mc->addChart(0, 0, chart01);
+            mc->addChart(0, chart01->getHeight(), chart02);
+        }else if(m_sleepLst01.count() > 0 && m_sleepLst02.count() == 0){
+            BaseChart *chart01 = sleepLine(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst01);
+            mc->addChart(0, 0, chart01);
+        }else if(m_sleepLst01.count() == 0 && m_sleepLst02.count() > 0){
+            BaseChart *chart02 = sleepLine(mc->getWidth(), (mc->getHeight() - 80), m_sleepLst02);
+            mc->addChart(0, 0, chart02);
+        }else{
 
+        }
     }
 
 
@@ -433,3 +447,97 @@ void SleepResult::makeDataStack(DataStack *dataStack, QList<Bean::Sleep> sleepLs
     dataStack->awakeSum_len = awakeSums.count();
 }
 
+BaseChart *SleepResult::sleepLine(int width, int height, QList<Bean::Sleep> sleepLst){
+    if(sleepLst.count() == 0){
+        return NULL;
+    }
+
+    DataLine dataLine;
+    makeDataLine(&dataLine, sleepLst);
+
+    //line
+    XYChart *c = new XYChart(width, height, GET_STYLE().main_bg_color, -1, 0);
+
+    c->setPlotArea(40, 20, c->getWidth() - 40, c->getHeight() - 20
+                         , GET_STYLE().plot_bg_color, -1
+                         , -1
+                         , GET_STYLE().grid_color
+                         , GET_STYLE().grid_color
+              )->setGridWidth(1, 1, 1, 1);
+
+    c->yAxis()->setTickOffset(1.0);
+
+    c->yAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
+
+    c->yAxis()->setMultiFormat(Chart::StartOfHourFilter(), "<*font=arialbd.ttf*>{value|h:n}"
+                , Chart::StartOfMinuteFilter(), "<*font=arialbd.ttf*>{value|h:n}");
+
+    c->xAxis2()->setLabels(DoubleArray(dataLine.labels, dataLine.label_len));
+
+    c->xAxis2()->setMultiFormat(Chart::StartOfMonthFilter(), "<*font=arialbd.ttf*>{value|d mmm}"
+                , Chart::StartOfDayFilter(), "<*font=arialbd.ttf*>{value|d}");
+
+    c->xAxis2()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
+
+    SplineLayer *layer0 = c->addSplineLayer(DoubleArray(dataLine.startDate, dataLine.startDate_len), DEEP_COLOR, "sleep");
+    layer0->setLineWidth(2);
+
+    LineLayer *layer1 = c->addLineLayer(DoubleArray(dataLine.endDate, dataLine.endDate_len),
+        DEEP_COLOR, "wake");
+    layer1->setLineWidth(2);
+
+    c->addInterLineLayer(layer0->getLine(), layer1->getLine(), LATENT_COLOR, LATENT_COLOR);
+
+    delete dataLine.labels;
+    delete dataLine.startDate;
+    delete dataLine.endDate;
+
+    return c;
+}
+
+void SleepResult::makeDataLine(DataLine *dataLine, QList<Bean::Sleep> sleepLst){
+    QList<double> labels;
+    QList<double> startDates;
+    QList<double> endDates;
+
+    int sleepCount = sleepLst.count();
+    for(int i = 0;i < sleepCount;i++){
+        Bean::Sleep sleep = sleepLst[i];
+
+        //date
+        labels.append(sleep.date());
+
+        //latent sleep
+        startDates.append(sleep.start());
+        endDates.append(sleep.end());
+    }
+
+    double *c_labels = new double[labels.count()];
+    double *c_startDates = new double[startDates.count()];
+    double *c_endDates = new double[endDates.count()];
+
+    int index = 0;
+    for(double label : labels){
+        c_labels[index] = label;
+        index++;
+    }
+
+    index = 0;
+    for(double startDate : startDates){
+        c_startDates[index] = startDate;
+        index++;
+    }
+
+    index = 0;
+    for(double endDate : endDates){
+        c_endDates[index] = endDate;
+        index++;
+    }
+
+    dataLine->labels = c_labels;
+    dataLine->label_len = labels.count();
+    dataLine->startDate = c_startDates;
+    dataLine->startDate_len = startDates.count();
+    dataLine->endDate = c_endDates;
+    dataLine->endDate_len = endDates.count();
+}

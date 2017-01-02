@@ -40,6 +40,15 @@ typedef struct DataStack{
     int awakeSum_len;
 }DataStack;
 
+typedef struct DataLine{
+    double *labels;
+    int label_len;
+    double *startDate;
+    int startDate_len;
+    double *endDate;
+    int endDate_len;
+}DataLine;
+
 class SleepResult : public QWidget{
     Q_OBJECT
 public:
@@ -54,11 +63,15 @@ private:
     void initUI();
     void initConnect();
     void makeChart();
+
     BaseChart *sleepGantt(int, int, QList<Bean::Sleep>);
     void makeDataGantt(DataGantt *, QList<Bean::Sleep>);
 
     BaseChart *sleepStack(int, int, QList<Bean::Sleep>);
     void makeDataStack(DataStack *, QList<Bean::Sleep>);
+
+    BaseChart *sleepLine(int, int, QList<Bean::Sleep>);
+    void makeDataLine(DataLine *, QList<Bean::Sleep>);
 
 private:
     int m_moduleId;
