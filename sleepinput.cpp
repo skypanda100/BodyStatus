@@ -8,6 +8,7 @@ SleepInput::SleepInput(QWidget *parent)
 }
 
 SleepInput::~SleepInput(){
+    delete m_personComboBox;
     delete m_fDateEdit;
     delete m_tDateEdit;
     delete m_searchButton;
@@ -24,6 +25,14 @@ void SleepInput::initUI(){
 
     QFont labelFont;
     labelFont.setBold(true);
+
+    QLabel *personLabel = new QLabel;
+    personLabel->setFont(labelFont);
+    personLabel->setText("Person");
+
+    m_personComboBox = new QComboBox;
+    m_personComboBox->insertItem(0, "gg");
+    m_personComboBox->insertItem(1, "tt");
 
     QLabel *fromLabel = new QLabel;
     fromLabel->setFont(labelFont);
@@ -47,11 +56,13 @@ void SleepInput::initUI(){
     m_searchButton->setText("Search");
 
     QGridLayout *mainLayout = new QGridLayout;
-    mainLayout->addWidget(fromLabel, 0, 0);
-    mainLayout->addWidget(m_fDateEdit, 0, 1);
-    mainLayout->addWidget(toLabel, 1, 0);
-    mainLayout->addWidget(m_tDateEdit, 1, 1);
-    mainLayout->addWidget(m_searchButton, 2, 0, 1, 2);
+    mainLayout->addWidget(personLabel, 0, 0);
+    mainLayout->addWidget(m_personComboBox, 0, 1);
+    mainLayout->addWidget(fromLabel, 1, 0);
+    mainLayout->addWidget(m_fDateEdit, 1, 1);
+    mainLayout->addWidget(toLabel, 2, 0);
+    mainLayout->addWidget(m_tDateEdit, 2, 1);
+    mainLayout->addWidget(m_searchButton, 3, 0, 1, 2);
     this->setLayout(mainLayout);
 }
 
@@ -60,10 +71,12 @@ void SleepInput::initConnect(){
 }
 
 void SleepInput::onSearchClicked(){
+    int personId = m_personComboBox->currentIndex();
     QDate fDate = m_fDateEdit->date();
     QDate tDate = m_tDateEdit->date();
 
-    QString queryStr = QString("select * from status_sleep where date >= '%1' and date <= '%2' order by date asc")
+    QString queryStr = QString("select * from status_sleep where person = %1 and date >= '%2' and date <= '%3' order by date asc")
+            .arg(personId)
             .arg(fDate.toString("yyyy-MM-dd 00:00:00"))
             .arg(tDate.toString("yyyy-MM-dd 00:00:00"));
 

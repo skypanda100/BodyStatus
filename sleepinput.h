@@ -24,6 +24,7 @@ private slots:
 
 private:
     Db *m_db;
+    QComboBox *m_personComboBox;
     QDateEdit *m_fDateEdit;
     QDateEdit *m_tDateEdit;
     QPushButton *m_searchButton;
