@@ -10,7 +10,7 @@ static ERDK_STYLE DARK_STYLE = {
 
 static ERDK_STYLE LIGHT_STYLE = {
     0xF0F0F0,
-    0xFFFFFF,
+    0xEEEEEE,
     0xDDDDDD,
     0x000000,
     0x000000

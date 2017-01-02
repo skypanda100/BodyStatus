@@ -285,9 +285,9 @@ BaseChart *SleepResult::sleep(double lowlimit, double uplimit
     c->setPlotArea(40, 20, this->width() - 40, this->height() - 60
                    , GET_STYLE().plot_bg_color, -1
                    , -1
-                   , GET_STYLE().grid_color
-                   , GET_STYLE().grid_color
-        )->setGridWidth(1, 1, 1, 1);
+                   , Chart::Transparent
+                   , Chart::Transparent
+        )->setGridWidth(0, 0, 0, 0);
 
     c->swapXY();
 
@@ -311,13 +311,13 @@ BaseChart *SleepResult::sleep(double lowlimit, double uplimit
 
     c->xAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
 
-    BoxWhiskerLayer *layer = c->addBoxWhiskerLayer2(DoubleArray(startDate, startDate_len)
-                                                    , DoubleArray(endDate, endDate_len),
-        DoubleArray(), DoubleArray(), DoubleArray(), IntArray(colors, color_len));
+    BoxWhiskerLayer *layer = c->addBoxWhiskerLayer2(DoubleArray(startDate, startDate_len), DoubleArray(endDate, endDate_len)
+                                                    , DoubleArray(), DoubleArray()
+                                                    , DoubleArray(), IntArray(colors, color_len));
     layer->setXData(DoubleArray(taskNo, task_len));
-    layer->setBorderColor(Chart::SameAsMainColor);
+    layer->setBorderColor(Chart::Transparent, Chart::barLighting(0.8, 1.0));
 
-    layer->setDataWidth(c->getPlotArea()->getHeight() / label_len * 1 / 2);
+    layer->setDataWidth(c->getPlotArea()->getHeight() / label_len * 2 / 3);
 
     c->makeChart();
 
