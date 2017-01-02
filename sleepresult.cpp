@@ -361,6 +361,8 @@ BaseChart *SleepResult::sleepStack(int width, int height, QList<Bean::Sleep> sle
 
     c->yAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
 
+    c->yAxis()->setLinearScale(0, 14);
+
     c->xAxis2()->setLabels(DoubleArray(dataStack.labels, dataStack.label_len));
 
     c->xAxis2()->setMultiFormat(Chart::StartOfMonthFilter(), "<*font=arialbd.ttf*>{value|d mmm}"
