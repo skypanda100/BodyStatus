@@ -7,6 +7,9 @@ Sleep::Sleep()
     : m_date(0)
     , m_start(0)
     , m_end(0)
+    , m_sleepSum(0)
+    , m_deepSleepSum(0)
+    , m_awakeSum(0)
     , m_deepStart01(0)
     , m_deepEnd01(0)
     , m_deepStart02(0)
@@ -350,5 +353,35 @@ double Sleep::awakeEnd04() const
 void Sleep::setAwakeEnd04(double awakeEnd04)
 {
     m_awakeEnd04 = awakeEnd04;
+}
+
+double Sleep::sleepSum() const
+{
+    return m_sleepSum;
+}
+
+void Sleep::setSleepSum(double sleepSum)
+{
+    m_sleepSum = sleepSum;
+}
+
+double Sleep::deepSleepSum() const
+{
+    return m_deepSleepSum;
+}
+
+void Sleep::setDeepSleepSum(double deepSleepSum)
+{
+    m_deepSleepSum = deepSleepSum;
+}
+
+double Sleep::awakeSum() const
+{
+    return m_awakeSum;
+}
+
+void Sleep::setAwakeSum(double awakeSum)
+{
+    m_awakeSum = awakeSum;
 }
 

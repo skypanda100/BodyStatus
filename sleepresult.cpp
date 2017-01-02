@@ -84,12 +84,26 @@ void SleepResult::makeData(){
     QList<double> startDates;
     QList<double> endDates;
     QList<int> colors;
+
+    QList<double> sleepSums;
+    QList<double> deepSleepSums;
+    QList<double> awakeSums;
+
     int sleepCount = m_sleepLst.count();
     for(int i = 0;i < sleepCount;i++){
         Bean::Sleep sleep = m_sleepLst[i];
 
         //date
         labels.append(sleep.date());
+
+        //sleepSum
+        sleepSums.append(sleep.sleepSum());
+
+        //deepSleepSum
+        deepSleepSums.append(sleep.deepSleepSum());
+
+        //awakeSums
+        awakeSums.append(sleep.awakeSum());
 
         //latent sleep
         startDates.append(sleep.start());
@@ -193,10 +207,31 @@ void SleepResult::makeData(){
     int *c_colors = new int[colors.count()];
     double lowlimit = 0;
     double uplimit = 0;
+    double *c_sleepSums = new double[sleepSums.count()];
+    double *c_deepSleepSums = new double[deepSleepSums.count()];
+    double *c_awakeSums = new double[awakeSums.count()];
 
     int index = 0;
     for(double label : labels){
         c_labels[index] = label;
+        index++;
+    }
+
+    index = 0;
+    for(double sum : sleepSums){
+        c_sleepSums[index] = sum;
+        index++;
+    }
+
+    index = 0;
+    for(double sum : deepSleepSums){
+        c_deepSleepSums[index] = sum;
+        index++;
+    }
+
+    index = 0;
+    for(double sum : awakeSums){
+        c_awakeSums[index] = sum;
         index++;
     }
 
@@ -243,13 +278,19 @@ void SleepResult::makeData(){
               , c_taskNos, taskNos.count()
               , c_startDates, startDates.count()
               , c_endDates, endDates.count()
-              , c_colors, colors.count());
+              , c_colors, colors.count()
+              , c_sleepSums, sleepSums.count()
+              , c_deepSleepSums, deepSleepSums.count()
+              , c_awakeSums, awakeSums.count());
 
     delete c_labels;
     delete c_taskNos;
     delete c_startDates;
     delete c_endDates;
     delete c_colors;
+    delete c_sleepSums;
+    delete c_deepSleepSums;
+    delete c_awakeSums;
 }
 
 void SleepResult::makeChart(double lowlimit, double uplimit
@@ -257,7 +298,10 @@ void SleepResult::makeChart(double lowlimit, double uplimit
                             , double *taskNo, int task_len
                             , double *startDate, int startDate_len
                             , double *endDate, int endDate_len
-                            , int *colors, int color_len){
+                            , int *colors, int color_len
+                            , double *sleepSums, int sleepSum_len
+                            , double *deepSleepSums, int deepSleepSum_len
+                            , double *awakeSums, int awakeSum_len){
     if(m_ChartViewer->getChart() != NULL){
         delete m_ChartViewer->getChart();
     }
@@ -267,7 +311,10 @@ void SleepResult::makeChart(double lowlimit, double uplimit
                                       , taskNo, task_len
                                       , startDate, startDate_len
                                       , endDate, endDate_len
-                                      , colors, color_len));
+                                      , colors, color_len
+                                      , sleepSums, sleepSum_len
+                                      , deepSleepSums, deepSleepSum_len
+                                      , awakeSums, awakeSum_len));
         m_ChartViewer->updateDisplay();
     }
 }
@@ -277,48 +324,87 @@ BaseChart *SleepResult::sleep(double lowlimit, double uplimit
                               , double *taskNo, int task_len
                               , double *startDate, int startDate_len
                               , double *endDate, int endDate_len
-                              , int *colors, int color_len){
+                              , int *colors, int color_len
+                              , double *sleepSums, int sleepSum_len
+                              , double *deepSleepSums, int deepSleepSum_len
+                              , double *awakeSums, int awakeSum_len){
 
-    XYChart *c = new XYChart(this->width(), this->height() + 60, GET_STYLE().main_bg_color, -1, 0);
+    MultiChart *mc = new MultiChart(this->width(), this->height() + 60, GET_STYLE().main_bg_color);
 
-    c->setPlotArea(40, 20, this->width() - 40, this->height() - 60
+    //gantt
+    XYChart *c_gantt = new XYChart(mc->getWidth(), mc->getHeight() / 2, GET_STYLE().main_bg_color, -1, 0);
+
+    c_gantt->setPlotArea(40, 20, c_gantt->getWidth() - 40, c_gantt->getHeight() - 20
                    , GET_STYLE().plot_bg_color, -1
                    , -1
                    , GET_STYLE().grid_color
                    , Chart::Transparent
         )->setGridWidth(1, 1, 1, 1);
 
-    c->swapXY();
+    c_gantt->swapXY();
 
-    c->yAxis()->setDateScale(lowlimit - 600, uplimit + 600, 600);
+    c_gantt->yAxis()->setDateScale(lowlimit - 600, uplimit + 600, 600);
 
-    c->yAxis()->setMultiFormat(Chart::StartOfHourFilter(), "<*font=arialbd.ttf*>{value|h:n}"
+    c_gantt->yAxis()->setMultiFormat(Chart::StartOfHourFilter(), "<*font=arialbd.ttf*>{value|h:n}"
                 , Chart::StartOfMinuteFilter(), "<*font=arialbd.ttf*>{value|n}");
 
-    c->yAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
+    c_gantt->yAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
 
-    c->setYAxisOnRight();
+    c_gantt->setYAxisOnRight();
 
-    c->xAxis()->setLabels(DoubleArray(labels, label_len));
+    c_gantt->xAxis()->setLabels(DoubleArray(labels, label_len));
 
-    c->xAxis()->setMultiFormat(Chart::StartOfMonthFilter(), "<*font=arialbd.ttf*>{value|d mmm}"
+    c_gantt->xAxis()->setMultiFormat(Chart::StartOfMonthFilter(), "<*font=arialbd.ttf*>{value|d mmm}"
                 , Chart::StartOfDayFilter(), "<*font=arialbd.ttf*>{value|d}");
 
-    c->xAxis()->setReverse();
+    c_gantt->xAxis()->setReverse();
 
-    c->xAxis()->setTickOffset(0.5);
+    c_gantt->xAxis()->setTickOffset(1);
 
-    c->xAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
+    c_gantt->xAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
 
-    BoxWhiskerLayer *layer = c->addBoxWhiskerLayer2(DoubleArray(startDate, startDate_len), DoubleArray(endDate, endDate_len)
+    BoxWhiskerLayer *layer_gantt = c_gantt->addBoxWhiskerLayer2(DoubleArray(startDate, startDate_len), DoubleArray(endDate, endDate_len)
                                                     , DoubleArray(), DoubleArray()
                                                     , DoubleArray(), IntArray(colors, color_len));
-    layer->setXData(DoubleArray(taskNo, task_len));
-    layer->setBorderColor(Chart::Transparent);
+    layer_gantt->setXData(DoubleArray(taskNo, task_len));
+    layer_gantt->setBorderColor(Chart::Transparent);
 
-    layer->setDataWidth(c->getPlotArea()->getHeight() / label_len * 2 / 3);
+    layer_gantt->setDataWidth(c_gantt->getPlotArea()->getHeight() / label_len * 2 / 3);
 
-    c->makeChart();
+    mc->addChart(0, 0, c_gantt);
 
-    return c;
+    //stack
+    XYChart *c_stack = new XYChart(mc->getWidth(), mc->getHeight() / 2, GET_STYLE().main_bg_color, -1, 0);
+
+    c_stack->setPlotArea(40, 20, c_stack->getWidth() - 40, c_stack->getHeight() - 100
+                         , GET_STYLE().plot_bg_color, -1
+                         , -1
+                         , GET_STYLE().grid_color
+                         , GET_STYLE().grid_color
+              )->setGridWidth(1, 1, 1, 1);
+
+    c_stack->yAxis()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
+
+    c_stack->xAxis2()->setLabels(DoubleArray(labels, label_len));
+
+    c_stack->xAxis2()->setMultiFormat(Chart::StartOfMonthFilter(), "<*font=arialbd.ttf*>{value|d mmm}"
+                , Chart::StartOfDayFilter(), "<*font=arialbd.ttf*>{value|d}");
+
+    c_stack->xAxis2()->setColors(GET_STYLE().font_color, GET_STYLE().font_color);
+
+    AreaLayer *layer_stack = c_stack->addAreaLayer(Chart::Stack);
+    layer_stack->setBorderColor(Chart::SameAsMainColor);
+    layer_stack->addDataSet(DoubleArray(awakeSums, awakeSum_len), AWAKE_COLOR,
+        "awake");
+    layer_stack->addDataSet(DoubleArray(deepSleepSums, deepSleepSum_len), DEEP_COLOR,
+        "deep sleep");
+    layer_stack->addDataSet(DoubleArray(sleepSums, sleepSum_len), LATENT_COLOR,
+        "sleep");
+
+    mc->addChart(0, c_gantt->getHeight(), c_stack);
+
+
+    mc->makeChart();
+
+    return mc;
 }

@@ -10,9 +10,9 @@
 
 using namespace std;
 
-#define LATENT_COLOR    0x4088aa
-#define DEEP_COLOR      0x00608d
-#define AWAKE_COLOR     0xff69b4
+#define LATENT_COLOR    0x804088aa
+#define DEEP_COLOR      0x8000608d
+#define AWAKE_COLOR     0x80ff69b4
 
 class SleepResult : public QWidget{
     Q_OBJECT
@@ -28,8 +28,24 @@ private:
     void initUI();
     void initConnect();
     void makeData();
-    void makeChart(double lowlimit, double uplimit, double *labels, int label_len, double *taskNo, int task_len, double *startDate, int startDate_len, double *endDate, int endDate_len, int *colors, int color_len);
-    BaseChart *sleep(double lowlimit, double uplimit, double *labels, int label_len, double *taskNo, int task_len, double *startDate, int startDate_len, double *endDate, int endDate_len, int *colors, int color_len);
+    void makeChart(double lowlimit, double uplimit
+                   , double *labels, int label_len
+                   , double *taskNo, int task_len
+                   , double *startDate, int startDate_len
+                   , double *endDate, int endDate_len
+                   , int *colors, int color_len
+                   , double *sleepSums, int sleepSum_len
+                   , double *deepSleepSums, int deepSleepSum_len
+                   , double *awakeSums, int awakeSum_len);
+    BaseChart *sleep(double lowlimit, double uplimit
+                     , double *labels, int label_len
+                     , double *taskNo, int task_len
+                     , double *startDate, int startDate_len
+                     , double *endDate, int endDate_len
+                     , int *colors, int color_len
+                     , double *sleepSums, int sleepSum_len
+                     , double *deepSleepSums, int deepSleepSum_len
+                     , double *awakeSums, int awakeSum_len);
 
 private:
     QChartViewer *m_ChartViewer;

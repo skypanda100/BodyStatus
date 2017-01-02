@@ -102,10 +102,22 @@ public:
     double awakeEnd04() const;
     void setAwakeEnd04(double awakeEnd04);
 
+    double sleepSum() const;
+    void setSleepSum(double sleepSum);
+
+    double deepSleepSum() const;
+    void setDeepSleepSum(double deepSleepSum);
+
+    double awakeSum() const;
+    void setAwakeSum(double awakeSum);
+
 private:
     double m_date;
     double m_start;
     double m_end;
+    double m_sleepSum;
+    double m_deepSleepSum;
+    double m_awakeSum;
     double m_deepStart01;
     double m_deepEnd01;
     double m_deepStart02;

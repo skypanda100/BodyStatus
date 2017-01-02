@@ -16,7 +16,7 @@ static ERDK_STYLE LIGHT_STYLE = {
     0x000000
 };
 
-static ERDK_STYLE CHOOSEN_STYLE = LIGHT_STYLE;
+static ERDK_STYLE CHOOSEN_STYLE = DARK_STYLE;
 
 void SET_STYLE(int style){
     switch(style){
