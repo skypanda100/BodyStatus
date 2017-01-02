@@ -76,7 +76,6 @@ void SleepResult::initUI(){
 }
 
 void SleepResult::initConnect(){
-
 }
 
 void SleepResult::makeData(){
@@ -285,9 +284,9 @@ BaseChart *SleepResult::sleep(double lowlimit, double uplimit
     c->setPlotArea(40, 20, this->width() - 40, this->height() - 60
                    , GET_STYLE().plot_bg_color, -1
                    , -1
+                   , GET_STYLE().grid_color
                    , Chart::Transparent
-                   , Chart::Transparent
-        )->setGridWidth(0, 0, 0, 0);
+        )->setGridWidth(1, 1, 1, 1);
 
     c->swapXY();
 
@@ -315,7 +314,7 @@ BaseChart *SleepResult::sleep(double lowlimit, double uplimit
                                                     , DoubleArray(), DoubleArray()
                                                     , DoubleArray(), IntArray(colors, color_len));
     layer->setXData(DoubleArray(taskNo, task_len));
-    layer->setBorderColor(Chart::Transparent, Chart::barLighting(0.8, 1.0));
+    layer->setBorderColor(Chart::Transparent);
 
     layer->setDataWidth(c->getPlotArea()->getHeight() / label_len * 2 / 3);
 

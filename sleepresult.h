@@ -2,13 +2,18 @@
 #define SLEEPRESULT
 
 #include <QtWidgets>
+#include <sstream>
+#include <algorithm>
 #include "qchartviewer.h"
 #include "style.h"
 #include "sleep.h"
 
+using namespace std;
+
 #define LATENT_COLOR    0x4088aa
 #define DEEP_COLOR      0x00608d
 #define AWAKE_COLOR     0xff69b4
+
 class SleepResult : public QWidget{
     Q_OBJECT
 public:
