@@ -56,7 +56,8 @@ public:
     ~SleepResult();
 
 public slots:
-    void onSearch(int, QList<Bean::Sleep>);
+    void onSearch(QList<Bean::Sleep>);
+    void onModule(int);
     void onStyle();
 
 private:

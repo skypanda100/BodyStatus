@@ -2,6 +2,7 @@
 
 SleepResult::SleepResult(QWidget *parent)
     :QWidget(parent)
+    ,m_moduleId(0)
 {
     this->initUI();
     this->initConnect();
@@ -11,8 +12,7 @@ SleepResult::~SleepResult(){
     delete m_ChartViewer;
 }
 
-void SleepResult::onSearch(int moduleId, QList<Bean::Sleep> sleepLst){
-    this->m_moduleId = moduleId;
+void SleepResult::onSearch(QList<Bean::Sleep> sleepLst){
     this->m_sleepLst01.clear();
     this->m_sleepLst02.clear();
     for(Bean::Sleep sleep: sleepLst){
@@ -23,6 +23,10 @@ void SleepResult::onSearch(int moduleId, QList<Bean::Sleep> sleepLst){
         }
     }
     this->makeChart();
+}
+
+void SleepResult::onModule(int moduleId){
+    this->m_moduleId = moduleId;
 }
 
 void SleepResult::onStyle(){

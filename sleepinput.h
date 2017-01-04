@@ -13,7 +13,7 @@ public:
     ~SleepInput();
 
 signals:
-    void search(int, QList<Bean::Sleep>);
+    void search(QList<Bean::Sleep>);
 
 private:
     void initUI();
@@ -25,7 +25,6 @@ private slots:
 private:
     Db *m_db;
     QComboBox *m_personComboBox;
-    QComboBox *m_moduleComboBox;
     QDateEdit *m_fDateEdit;
     QDateEdit *m_tDateEdit;
     QPushButton *m_searchButton;
