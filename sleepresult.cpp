@@ -27,6 +27,7 @@ void SleepResult::onSearch(QList<Bean::Sleep> sleepLst){
 
 void SleepResult::onModule(int moduleId){
     this->m_moduleId = moduleId;
+    this->onStyle();
 }
 
 void SleepResult::onStyle(){

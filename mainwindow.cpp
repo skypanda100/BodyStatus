@@ -62,7 +62,7 @@ void MainWindow::initUI(){
     m_sleepDataAction = new QAction(sleepDataIcon, "Sleep Data", this);
     moduleToolBar->addAction(m_sleepDataAction);
 
-    QIcon sleepIcon = QIcon(":/image/sleep.png");
+    QIcon sleepIcon = QIcon(":/image/sleep_visual.png");
     m_sleepMenu = new QMenu("Sleep", this);
     m_sleepMenu->setIcon(sleepIcon);
     m_sleepDistributionAction = new QAction("Sleep Distribution", m_sleepMenu);
