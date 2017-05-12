@@ -101,7 +101,8 @@ void MainWindow::initConnect(){
 }
 
 void MainWindow::onSleepDataTriggered(){
-    m_sleepInput->exec();
+//    m_sleepInput->exec();
+    m_sleepInput->show();
 }
 
 void MainWindow::onSleepTriggered(QAction *action){
