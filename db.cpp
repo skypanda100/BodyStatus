@@ -223,3 +223,17 @@ QList<Bean::Sleep> Db::querySleep(QString queryStr){
 
     return sleeps;
 }
+
+bool Db::insertSleep(QList<QVariant> argList){
+    QString insertStr = QString("insert into status_sleep values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    QSqlQuery query;
+    query.prepare(insertStr);
+    for(QVariant arg : argList){
+        query.addBindValue(arg);
+    }
+    return query.exec();
+}
+
+QString Db::lastError(){
+    return db.lastError().text();
+}

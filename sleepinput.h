@@ -43,10 +43,14 @@ private:
 
 private slots:
     void onInsertClicked();
+    void onEditingFinished();
 
 private:
     Db *m_db;
+    QComboBox *m_personComboBox;
     QDateEdit *m_dateEdit;
+    QLineEdit *m_sleepEditStart00;
+    QLineEdit *m_sleepEditEnd00;
     QLineEdit *m_sleepEditStart01;
     QLineEdit *m_sleepEditEnd01;
     QLineEdit *m_sleepEditStart02;

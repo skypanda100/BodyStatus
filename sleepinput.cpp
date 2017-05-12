@@ -101,6 +101,9 @@ SleepInsertInput::SleepInsertInput(QWidget *parent)
 
 SleepInsertInput::~SleepInsertInput(){
     delete m_dateEdit;
+    delete m_personComboBox;
+    delete m_sleepEditStart00;
+    delete m_sleepEditEnd00;
     delete m_sleepEditStart01;
     delete m_sleepEditEnd01;
     delete m_sleepEditStart02;
@@ -138,6 +141,14 @@ void SleepInsertInput::initUI(){
     QFont labelFont;
     labelFont.setBold(true);
 
+    QLabel *personLabel = new QLabel;
+    personLabel->setFont(labelFont);
+    personLabel->setText("Person");
+
+    m_personComboBox = new QComboBox;
+    m_personComboBox->insertItem(0, "gg");
+    m_personComboBox->insertItem(1, "tt");
+
     QLabel *dateLabel = new QLabel;
     dateLabel->setFont(labelFont);
     dateLabel->setText("Date");
@@ -146,8 +157,21 @@ void SleepInsertInput::initUI(){
     m_dateEdit->setDate(QDateTime::currentDateTime().date());
     m_dateEdit->setCalendarPopup(true);
 
-    QRegExp regExp("^[0-9]{4}$");
+    QRegExp regExp("^(([0-1][0-9])|(2[0-3]))[0-5][0-9]$");
     QValidator *validator = new QRegExpValidator(regExp, 0);
+
+    QLabel *sleepFullLabel = new QLabel;
+    sleepFullLabel->setFont(labelFont);
+    sleepFullLabel->setText("Sleep");
+
+    m_sleepEditStart00 = new QLineEdit;
+    m_sleepEditStart00->setValidator(validator);
+    m_sleepEditEnd00 = new QLineEdit;
+    m_sleepEditEnd00->setValidator(validator);
+    QHBoxLayout *sleepEditLayout00 = new QHBoxLayout;
+    sleepEditLayout00->addWidget(m_sleepEditStart00);
+    sleepEditLayout00->addStretch(1);
+    sleepEditLayout00->addWidget(m_sleepEditEnd00);
 
     QLabel *sleepLabel = new QLabel;
     sleepLabel->setFont(labelFont);
@@ -287,8 +311,14 @@ void SleepInsertInput::initUI(){
     m_insertButton->setText("Insert");
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(personLabel);
+    mainLayout->addWidget(m_personComboBox);
+    mainLayout->addSpacing(10);
     mainLayout->addWidget(dateLabel);
     mainLayout->addWidget(m_dateEdit);
+    mainLayout->addSpacing(10);
+    mainLayout->addWidget(sleepFullLabel);
+    mainLayout->addLayout(sleepEditLayout00);
     mainLayout->addSpacing(10);
     mainLayout->addWidget(sleepLabel);
     mainLayout->addLayout(sleepEditLayout01);
@@ -312,27 +342,132 @@ void SleepInsertInput::initUI(){
 }
 
 void SleepInsertInput::initConnect(){
-
+    connect(m_sleepEditStart00, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditEnd00, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditStart01, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditEnd01, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditStart02, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditEnd02, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditStart03, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditEnd03, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditStart04, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditEnd04, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditStart05, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditEnd05, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditStart06, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditEnd06, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditStart07, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditEnd07, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditStart08, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditEnd08, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditStart09, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditEnd09, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditStart10, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_sleepEditEnd10, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_awakeEditStart01, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_awakeEditEnd01, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_awakeEditStart02, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_awakeEditEnd02, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_awakeEditStart03, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_awakeEditEnd03, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_awakeEditStart04, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_awakeEditEnd04, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_insertButton, SIGNAL(clicked()), this, SLOT(onInsertClicked()));
 }
 
 void SleepInsertInput::onInsertClicked(){
+    int person = m_personComboBox->currentIndex();
+    QString date = m_dateEdit->dateTime().toString("yyyy-MM-dd hh:mm:00");
+    QString sleepStart00 = m_sleepEditStart00->text();
+    QString sleepEnd00 = m_sleepEditEnd00->text();
+    QString sleepStart01 = m_sleepEditStart01->text();
+    QString sleepEnd01 = m_sleepEditEnd01->text();
+    QString sleepStart02 = m_sleepEditStart02->text();
+    QString sleepEnd02 = m_sleepEditEnd02->text();
+    QString sleepStart03 = m_sleepEditStart03->text();
+    QString sleepEnd03 = m_sleepEditEnd03->text();
+    QString sleepStart04 = m_sleepEditStart04->text();
+    QString sleepEnd04 = m_sleepEditEnd04->text();
+    QString sleepStart05 = m_sleepEditStart05->text();
+    QString sleepEnd05 = m_sleepEditEnd05->text();
+    QString sleepStart06 = m_sleepEditStart06->text();
+    QString sleepEnd06 = m_sleepEditEnd06->text();
+    QString sleepStart07 = m_sleepEditStart07->text();
+    QString sleepEnd07 = m_sleepEditEnd07->text();
+    QString sleepStart08 = m_sleepEditStart08->text();
+    QString sleepEnd08 = m_sleepEditEnd08->text();
+    QString sleepStart09 = m_sleepEditStart09->text();
+    QString sleepEnd09 = m_sleepEditEnd09->text();
+    QString sleepStart10 = m_sleepEditStart10->text();
+    QString sleepEnd10 = m_sleepEditEnd10->text();
+    QString awakeStart01 = m_awakeEditStart01->text();
+    QString awakeEnd01 = m_awakeEditEnd01->text();
+    QString awakeStart02 = m_awakeEditStart02->text();
+    QString awakeEnd02 = m_awakeEditEnd02->text();
+    QString awakeStart03 = m_awakeEditStart03->text();
+    QString awakeEnd03 = m_awakeEditEnd03->text();
+    QString awakeStart04 = m_awakeEditStart04->text();
+    QString awakeEnd04 = m_awakeEditEnd04->text();
 
+    QList<QVariant> argList;
+    argList.append(person);
+    argList.append(date);
+    argList.append(sleepStart00);
+    argList.append(sleepEnd00);
+    argList.append(sleepStart01.isEmpty() ? NULL : sleepStart01);
+    argList.append(sleepEnd01.isEmpty() ? NULL : sleepEnd01);
+    argList.append(sleepStart02.isEmpty() ? NULL : sleepStart02);
+    argList.append(sleepEnd02.isEmpty() ? NULL : sleepEnd02);
+    argList.append(sleepStart03.isEmpty() ? NULL : sleepStart03);
+    argList.append(sleepEnd03.isEmpty() ? NULL : sleepEnd03);
+    argList.append(sleepStart04.isEmpty() ? NULL : sleepStart04);
+    argList.append(sleepEnd04.isEmpty() ? NULL : sleepEnd04);
+    argList.append(sleepStart05.isEmpty() ? NULL : sleepStart05);
+    argList.append(sleepEnd05.isEmpty() ? NULL : sleepEnd05);
+    argList.append(sleepStart06.isEmpty() ? NULL : sleepStart06);
+    argList.append(sleepEnd06.isEmpty() ? NULL : sleepEnd06);
+    argList.append(sleepStart07.isEmpty() ? NULL : sleepStart07);
+    argList.append(sleepEnd07.isEmpty() ? NULL : sleepEnd07);
+    argList.append(sleepStart08.isEmpty() ? NULL : sleepStart08);
+    argList.append(sleepEnd08.isEmpty() ? NULL : sleepEnd08);
+    argList.append(sleepStart09.isEmpty() ? NULL : sleepStart09);
+    argList.append(sleepEnd09.isEmpty() ? NULL : sleepEnd09);
+    argList.append(sleepStart10.isEmpty() ? NULL : sleepStart10);
+    argList.append(sleepEnd10.isEmpty() ? NULL : sleepEnd10);
+    argList.append(awakeStart01.isEmpty() ? NULL : awakeStart01);
+    argList.append(awakeEnd01.isEmpty() ? NULL : awakeEnd01);
+    argList.append(awakeStart02.isEmpty() ? NULL : awakeStart02);
+    argList.append(awakeEnd02.isEmpty() ? NULL : awakeEnd02);
+    argList.append(awakeStart03.isEmpty() ? NULL : awakeStart03);
+    argList.append(awakeEnd03.isEmpty() ? NULL : awakeEnd03);
+    argList.append(awakeStart04.isEmpty() ? NULL : awakeStart04);
+    argList.append(awakeEnd04.isEmpty() ? NULL : awakeEnd04);
+
+    if(!(m_db->insertSleep(argList))){
+        QMessageBox::critical(0, QObject::tr("Database Error"),
+                              "insert sleep data failed");
+    }else{
+        QMessageBox::information(0, QObject::tr("Database Infomation"),
+                              "insert sleep data successfully");
+    }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void SleepInsertInput::onEditingFinished(){
+    int minutesFull = 24 * 60;
+    int minutesStd = 18 * 60;
+    QLineEdit *lineEdit = (QLineEdit *)(this->sender());
+    QString hhmmStr = lineEdit->text().trimmed();
+    QDateTime dateTime = m_dateEdit->dateTime();
+    int hour = hhmmStr.mid(0, 2).toInt(0, 10);
+    int minute = hhmmStr.mid(2, 2).toInt(0, 10);
+    int minutes = hour * 60 + minute;
+    if(minutes >= minutesStd){
+        dateTime = dateTime.addSecs(-(minutesFull - minutes) * 60);
+    }else{
+        dateTime = dateTime.addSecs(minutes * 60);
+    }
+    lineEdit->setText(dateTime.toString("yyyy-MM-dd hh:mm"));
+}
 
 SleepInput::SleepInput(QWidget *parent)
     :QDialog(parent)
@@ -355,7 +490,7 @@ void SleepInput::initData(){
 void SleepInput::initUI(){
     this->setWindowFlags(Qt::WindowCloseButtonHint);
     this->setFixedWidth(300);
-    this->setFixedHeight(600);
+    this->setFixedHeight(700);
 
     this->setWindowIcon(QIcon(":/images/sleep.png"));
     this->setWindowTitle("Sleep Data");

@@ -14,6 +14,8 @@ public:
     ~Db();
 
     QList<Bean::Sleep> querySleep(QString);
+    bool insertSleep(QList<QVariant>);
+    QString lastError();
 
 private:
     void openDb();
