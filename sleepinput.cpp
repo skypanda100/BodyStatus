@@ -132,6 +132,7 @@ SleepInsertInput::~SleepInsertInput(){
     delete m_awakeEditEnd03;
     delete m_awakeEditStart04;
     delete m_awakeEditEnd04;
+    delete m_clearButton;
     delete m_insertButton;
 }
 
@@ -307,8 +308,13 @@ void SleepInsertInput::initUI(){
     awakeEditLayout04->addStretch(1);
     awakeEditLayout04->addWidget(m_awakeEditEnd04);
 
+    m_clearButton = new QPushButton;
+    m_clearButton->setText("Clear");
     m_insertButton = new QPushButton;
     m_insertButton->setText("Insert");
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
+    buttonLayout->addWidget(m_clearButton);
+    buttonLayout->addWidget(m_insertButton);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(personLabel);
@@ -337,7 +343,7 @@ void SleepInsertInput::initUI(){
     mainLayout->addLayout(awakeEditLayout03);
     mainLayout->addLayout(awakeEditLayout04);
     mainLayout->addStretch(1);
-    mainLayout->addWidget(m_insertButton);
+    mainLayout->addLayout(buttonLayout);
     this->setLayout(mainLayout);
 }
 
@@ -372,7 +378,41 @@ void SleepInsertInput::initConnect(){
     connect(m_awakeEditEnd03, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
     connect(m_awakeEditStart04, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
     connect(m_awakeEditEnd04, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
+    connect(m_clearButton, SIGNAL(clicked()), this, SLOT(onClearClicked()));
     connect(m_insertButton, SIGNAL(clicked()), this, SLOT(onInsertClicked()));
+}
+
+void SleepInsertInput::onClearClicked(){
+    m_sleepEditStart00->clear();
+    m_sleepEditEnd00->clear();
+    m_sleepEditStart01->clear();
+    m_sleepEditEnd01->clear();
+    m_sleepEditStart02->clear();
+    m_sleepEditEnd02->clear();
+    m_sleepEditStart03->clear();
+    m_sleepEditEnd03->clear();
+    m_sleepEditStart04->clear();
+    m_sleepEditEnd04->clear();
+    m_sleepEditStart05->clear();
+    m_sleepEditEnd05->clear();
+    m_sleepEditStart06->clear();
+    m_sleepEditEnd06->clear();
+    m_sleepEditStart07->clear();
+    m_sleepEditEnd07->clear();
+    m_sleepEditStart08->clear();
+    m_sleepEditEnd08->clear();
+    m_sleepEditStart09->clear();
+    m_sleepEditEnd09->clear();
+    m_sleepEditStart10->clear();
+    m_sleepEditEnd10->clear();
+    m_awakeEditStart01->clear();
+    m_awakeEditEnd01->clear();
+    m_awakeEditStart02->clear();
+    m_awakeEditEnd02->clear();
+    m_awakeEditStart03->clear();
+    m_awakeEditEnd03->clear();
+    m_awakeEditStart04->clear();
+    m_awakeEditEnd04->clear();
 }
 
 void SleepInsertInput::onInsertClicked(){

@@ -42,6 +42,7 @@ private:
     void initConnect();
 
 private slots:
+    void onClearClicked();
     void onInsertClicked();
     void onEditingFinished();
 
@@ -79,6 +80,7 @@ private:
     QLineEdit *m_awakeEditEnd03;
     QLineEdit *m_awakeEditStart04;
     QLineEdit *m_awakeEditEnd04;
+    QPushButton *m_clearButton;
     QPushButton *m_insertButton;
 };
 
