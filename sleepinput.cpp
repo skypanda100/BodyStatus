@@ -134,6 +134,9 @@ SleepInsertInput::~SleepInsertInput(){
     delete m_awakeEditEnd04;
     delete m_clearButton;
     delete m_insertButton;
+    delete m_sleepLabel;
+    delete m_deepSleepLabel;
+    delete m_awakeLabel;
 }
 
 void SleepInsertInput::initUI(){
@@ -141,6 +144,9 @@ void SleepInsertInput::initUI(){
 
     QFont labelFont;
     labelFont.setBold(true);
+    QFont calLabelFont;
+    calLabelFont.setBold(false);
+    calLabelFont.setPixelSize(10);
 
     QLabel *personLabel = new QLabel;
     personLabel->setFont(labelFont);
@@ -164,6 +170,12 @@ void SleepInsertInput::initUI(){
     QLabel *sleepFullLabel = new QLabel;
     sleepFullLabel->setFont(labelFont);
     sleepFullLabel->setText("Sleep");
+    m_sleepLabel = new QLabel;
+    m_sleepLabel->setFont(calLabelFont);
+    QHBoxLayout *sleepLayout = new QHBoxLayout;
+    sleepLayout->addWidget(sleepFullLabel);
+    sleepLayout->addStretch(1);
+    sleepLayout->addWidget(m_sleepLabel);
 
     m_sleepEditStart00 = new QLineEdit;
     m_sleepEditStart00->setValidator(validator);
@@ -177,6 +189,12 @@ void SleepInsertInput::initUI(){
     QLabel *sleepLabel = new QLabel;
     sleepLabel->setFont(labelFont);
     sleepLabel->setText("Deep Sleep");
+    m_deepSleepLabel = new QLabel;
+    m_deepSleepLabel->setFont(calLabelFont);
+    QHBoxLayout *deepSleepLayout = new QHBoxLayout;
+    deepSleepLayout->addWidget(sleepLabel);
+    deepSleepLayout->addStretch(1);
+    deepSleepLayout->addWidget(m_deepSleepLabel);
 
     m_sleepEditStart01 = new QLineEdit;
     m_sleepEditStart01->setValidator(validator);
@@ -271,6 +289,12 @@ void SleepInsertInput::initUI(){
     QLabel *awakeLabel = new QLabel;
     awakeLabel->setFont(labelFont);
     awakeLabel->setText("Awake");
+    m_awakeLabel = new QLabel;
+    m_awakeLabel->setFont(calLabelFont);
+    QHBoxLayout *awakeLayout = new QHBoxLayout;
+    awakeLayout->addWidget(awakeLabel);
+    awakeLayout->addStretch(1);
+    awakeLayout->addWidget(m_awakeLabel);
 
     m_awakeEditStart01 = new QLineEdit;
     m_awakeEditStart01->setValidator(validator);
@@ -323,10 +347,10 @@ void SleepInsertInput::initUI(){
     mainLayout->addWidget(dateLabel);
     mainLayout->addWidget(m_dateEdit);
     mainLayout->addSpacing(10);
-    mainLayout->addWidget(sleepFullLabel);
+    mainLayout->addLayout(sleepLayout);
     mainLayout->addLayout(sleepEditLayout00);
     mainLayout->addSpacing(10);
-    mainLayout->addWidget(sleepLabel);
+    mainLayout->addLayout(deepSleepLayout);
     mainLayout->addLayout(sleepEditLayout01);
     mainLayout->addLayout(sleepEditLayout02);
     mainLayout->addLayout(sleepEditLayout03);
@@ -337,7 +361,7 @@ void SleepInsertInput::initUI(){
     mainLayout->addLayout(sleepEditLayout08);
     mainLayout->addLayout(sleepEditLayout09);
     mainLayout->addLayout(sleepEditLayout10);
-    mainLayout->addWidget(awakeLabel);
+    mainLayout->addLayout(awakeLayout);
     mainLayout->addLayout(awakeEditLayout01);
     mainLayout->addLayout(awakeEditLayout02);
     mainLayout->addLayout(awakeEditLayout03);
@@ -382,6 +406,150 @@ void SleepInsertInput::initConnect(){
     connect(m_insertButton, SIGNAL(clicked()), this, SLOT(onInsertClicked()));
 }
 
+void SleepInsertInput::calculate(){
+    QString sleepStart00 = m_sleepEditStart00->text();
+    QString sleepEnd00 = m_sleepEditEnd00->text();
+    QString sleepStart01 = m_sleepEditStart01->text();
+    QString sleepEnd01 = m_sleepEditEnd01->text();
+    QString sleepStart02 = m_sleepEditStart02->text();
+    QString sleepEnd02 = m_sleepEditEnd02->text();
+    QString sleepStart03 = m_sleepEditStart03->text();
+    QString sleepEnd03 = m_sleepEditEnd03->text();
+    QString sleepStart04 = m_sleepEditStart04->text();
+    QString sleepEnd04 = m_sleepEditEnd04->text();
+    QString sleepStart05 = m_sleepEditStart05->text();
+    QString sleepEnd05 = m_sleepEditEnd05->text();
+    QString sleepStart06 = m_sleepEditStart06->text();
+    QString sleepEnd06 = m_sleepEditEnd06->text();
+    QString sleepStart07 = m_sleepEditStart07->text();
+    QString sleepEnd07 = m_sleepEditEnd07->text();
+    QString sleepStart08 = m_sleepEditStart08->text();
+    QString sleepEnd08 = m_sleepEditEnd08->text();
+    QString sleepStart09 = m_sleepEditStart09->text();
+    QString sleepEnd09 = m_sleepEditEnd09->text();
+    QString sleepStart10 = m_sleepEditStart10->text();
+    QString sleepEnd10 = m_sleepEditEnd10->text();
+    QString awakeStart01 = m_awakeEditStart01->text();
+    QString awakeEnd01 = m_awakeEditEnd01->text();
+    QString awakeStart02 = m_awakeEditStart02->text();
+    QString awakeEnd02 = m_awakeEditEnd02->text();
+    QString awakeStart03 = m_awakeEditStart03->text();
+    QString awakeEnd03 = m_awakeEditEnd03->text();
+    QString awakeStart04 = m_awakeEditStart04->text();
+    QString awakeEnd04 = m_awakeEditEnd04->text();
+    int sleep = 0;
+    int deepSleep = 0;
+    int awake = 0;
+    if(!(sleepStart00.isEmpty() || sleepEnd00.isEmpty())
+            && (sleepStart00.length() == 16 && sleepEnd00.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(sleepStart00, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(sleepEnd00, "yyyy-MM-dd hh:mm");
+        sleep = startDateTime.secsTo(endDateTime) / 60;
+    }
+    if(!(sleepStart01.isEmpty() || sleepEnd01.isEmpty())
+                && (sleepStart01.length() == 16 && sleepEnd01.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(sleepStart01, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(sleepEnd01, "yyyy-MM-dd hh:mm");
+        deepSleep += startDateTime.secsTo(endDateTime) / 60 + 1;    }
+    if(!(sleepStart02.isEmpty() || sleepEnd02.isEmpty())
+                && (sleepStart02.length() == 16 && sleepEnd02.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(sleepStart02, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(sleepEnd02, "yyyy-MM-dd hh:mm");
+        deepSleep += startDateTime.secsTo(endDateTime) / 60 + 1;    }
+    if(!(sleepStart03.isEmpty() || sleepEnd03.isEmpty())
+                && (sleepStart03.length() == 16 && sleepEnd03.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(sleepStart03, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(sleepEnd03, "yyyy-MM-dd hh:mm");
+        deepSleep += startDateTime.secsTo(endDateTime) / 60 + 1;    }
+    if(!(sleepStart04.isEmpty() || sleepEnd04.isEmpty())
+                && (sleepStart04.length() == 16 && sleepEnd04.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(sleepStart04, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(sleepEnd04, "yyyy-MM-dd hh:mm");
+        deepSleep += startDateTime.secsTo(endDateTime) / 60 + 1;    }
+    if(!(sleepStart05.isEmpty() || sleepEnd05.isEmpty())
+                && (sleepStart05.length() == 16 && sleepEnd05.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(sleepStart05, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(sleepEnd05, "yyyy-MM-dd hh:mm");
+        deepSleep += startDateTime.secsTo(endDateTime) / 60 + 1;    }
+    if(!(sleepStart06.isEmpty() || sleepEnd06.isEmpty())
+                && (sleepStart06.length() == 16 && sleepEnd06.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(sleepStart06, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(sleepEnd06, "yyyy-MM-dd hh:mm");
+        deepSleep += startDateTime.secsTo(endDateTime) / 60 + 1;    }
+    if(!(sleepStart07.isEmpty() || sleepEnd07.isEmpty())
+                && (sleepStart07.length() == 16 && sleepEnd07.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(sleepStart07, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(sleepEnd07, "yyyy-MM-dd hh:mm");
+        deepSleep += startDateTime.secsTo(endDateTime) / 60 + 1;    }
+    if(!(sleepStart08.isEmpty() || sleepEnd08.isEmpty())
+                && (sleepStart08.length() == 16 && sleepEnd08.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(sleepStart08, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(sleepEnd08, "yyyy-MM-dd hh:mm");
+        deepSleep += startDateTime.secsTo(endDateTime) / 60 + 1;    }
+    if(!(sleepStart09.isEmpty() || sleepEnd09.isEmpty())
+                && (sleepStart09.length() == 16 && sleepEnd09.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(sleepStart09, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(sleepEnd09, "yyyy-MM-dd hh:mm");
+        deepSleep += startDateTime.secsTo(endDateTime) / 60 + 1;    }
+    if(!(sleepStart10.isEmpty() || sleepEnd10.isEmpty())
+                && (sleepStart10.length() == 16 && sleepEnd10.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(sleepStart10, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(sleepEnd10, "yyyy-MM-dd hh:mm");
+        deepSleep += startDateTime.secsTo(endDateTime) / 60 + 1;    }
+    if(!(awakeStart01.isEmpty() || awakeEnd01.isEmpty())
+                && (awakeStart01.length() == 16 && awakeEnd01.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(awakeStart01, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(awakeEnd01, "yyyy-MM-dd hh:mm");
+        awake += startDateTime.secsTo(endDateTime) / 60 + 1;
+    }
+    if(!(awakeStart02.isEmpty() || awakeEnd02.isEmpty())
+                && (awakeStart02.length() == 16 && awakeEnd02.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(awakeStart02, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(awakeEnd02, "yyyy-MM-dd hh:mm");
+        awake += startDateTime.secsTo(endDateTime) / 60 + 1;
+    }
+    if(!(awakeStart03.isEmpty() || awakeEnd03.isEmpty())
+                && (awakeStart03.length() == 16 && awakeEnd03.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(awakeStart03, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(awakeEnd03, "yyyy-MM-dd hh:mm");
+        awake += startDateTime.secsTo(endDateTime) / 60 + 1;
+    }
+    if(!(awakeStart04.isEmpty() || awakeEnd04.isEmpty())
+                && (awakeStart04.length() == 16 && awakeEnd04.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(awakeStart04, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(awakeEnd04, "yyyy-MM-dd hh:mm");
+        awake += startDateTime.secsTo(endDateTime) / 60 + 1;
+    }
+    if(!(sleepStart00.isEmpty() || sleepEnd00.isEmpty())
+            && (sleepStart00.length() == 16 && sleepEnd00.length() == 16)){
+        QDateTime startDateTime = QDateTime::fromString(sleepStart00, "yyyy-MM-dd hh:mm");
+        QDateTime endDateTime = QDateTime::fromString(sleepEnd00, "yyyy-MM-dd hh:mm");
+        sleep = startDateTime.secsTo(endDateTime) / 60 - awake;
+    }
+
+    if(sleep > 0){
+        int hour = sleep / 60;
+        int minute = sleep % 60;
+        m_sleepLabel->setText(QString("%1 hour %2 minute").arg(hour).arg(minute));
+    }else{
+        m_sleepLabel->setText("");
+    }
+    if(deepSleep > 0){
+        int hour = deepSleep / 60;
+        int minute = deepSleep % 60;
+        m_deepSleepLabel->setText(QString("%1 hour %2 minute").arg(hour).arg(minute));
+    }else{
+        m_deepSleepLabel->setText("");
+    }
+    if(awake > 0){
+        int hour = awake / 60;
+        int minute = awake % 60;
+        m_awakeLabel->setText(QString("%1 hour %2 minute").arg(hour).arg(minute));
+    }else{
+        m_awakeLabel->setText("");
+    }
+}
+
 void SleepInsertInput::onClearClicked(){
     m_sleepEditStart00->clear();
     m_sleepEditEnd00->clear();
@@ -413,6 +581,9 @@ void SleepInsertInput::onClearClicked(){
     m_awakeEditEnd03->clear();
     m_awakeEditStart04->clear();
     m_awakeEditEnd04->clear();
+    m_sleepLabel->setText("");
+    m_deepSleepLabel->setText("");
+    m_awakeLabel->setText("");
 }
 
 void SleepInsertInput::onInsertClicked(){
@@ -507,6 +678,8 @@ void SleepInsertInput::onEditingFinished(){
         dateTime = dateTime.addSecs(minutes * 60);
     }
     lineEdit->setText(dateTime.toString("yyyy-MM-dd hh:mm"));
+
+    this->calculate();
 }
 
 SleepInput::SleepInput(QWidget *parent)

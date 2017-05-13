@@ -40,6 +40,7 @@ public:
 private:
     void initUI();
     void initConnect();
+    void calculate();
 
 private slots:
     void onClearClicked();
@@ -82,6 +83,9 @@ private:
     QLineEdit *m_awakeEditEnd04;
     QPushButton *m_clearButton;
     QPushButton *m_insertButton;
+    QLabel *m_sleepLabel;
+    QLabel *m_deepSleepLabel;
+    QLabel *m_awakeLabel;
 };
 
 class SleepInput : public QDialog{
